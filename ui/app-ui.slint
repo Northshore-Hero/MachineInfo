@@ -1,0 +1,42 @@
+import { Button, VerticalBox } from "std-widgets.slint";
+import { SideBar } from "ui_lib/sidebar.slint";
+import { Page1 } from "pages/page1.slint";
+import { Page2 } from "pages/page2.slint";
+
+export component AppWindow inherits Window {
+    in-out property <string> input-text;
+    // Set Initial Display Parameters
+    preferred-width: 1000px;
+    preferred-height: 600px;
+    title: "SlintTemplate";
+
+    // Function Callbacks
+    callback file-close();
+    callback save-input(); // Add this line
+
+    // Create a Menubar
+    MenuBar {
+        Menu {
+            title: "File";
+            MenuItem {
+                title: "Close";
+                activated => { file-close(); }
+            }
+        }
+    }
+
+    // Actual Window
+    HorizontalLayout {
+            side-bar := SideBar {
+                title: @tr("SlintTemplate");
+                logo-source: @image-url("images/logo.svg");
+                model: [@tr("Menu" => "Page1"), @tr("Menu" => "Page2")];
+            }
+
+            if(side-bar.current-item == 0) : Page1 {}
+            if(side-bar.current-item == 1) : Page2 {
+                save-input => { root.save-input() }
+                input-text <=> root.input-text;
+            }
+    }
+}

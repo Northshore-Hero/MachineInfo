@@ -1,0 +1,11 @@
+[package]
+name = "MachineInfo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rusqlite = { version = "0.36.0", features = ["bundled"] }
+slint = "1.12.0"
+
+[build-dependencies]
+slint-build = "1.12.0"

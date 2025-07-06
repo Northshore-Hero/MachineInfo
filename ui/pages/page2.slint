@@ -1,0 +1,37 @@
+// Copyright © SixtyFPS GmbH <info@slint.dev>
+// SPDX-License-Identifier: MIT
+
+import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton } from "std-widgets.slint";
+
+export component Page2 inherits Window {
+    in-out property <string> input-text: "This is a Line Input";
+    callback save-input();
+
+    VerticalBox {
+        alignment: LayoutAlignment.start;
+        HorizontalBox {
+            Text {
+                text: "This is a Title";
+                font-size: 20px;
+            }
+        }
+        HorizontalBox {
+            Text {
+                text: "Example Label";
+                vertical-alignment: TextVerticalAlignment.center;
+            }
+            LineEdit {
+                max-height: 20px;
+                text <=> root.input-text;
+            }
+            Button {
+                text: "Save";
+                primary: true;
+                clicked => { save-input() }
+            }
+            Button {
+                text: "Cancel";
+            }
+        }
+    }
+}

@@ -4,11 +4,19 @@ import { Page1 } from "pages/page1.slint";
 import { Page2 } from "pages/page2.slint";
 
 export component AppWindow inherits Window {
+    // Page 1 Callbacks
+    in property <string> cpu-id;
+    in property <string> cpu-vendor;
+    in property <string> cpu-speed;
+    in property <string> cpu-cores;
+    in property <string> cpu-usage;
+    in property <string> cpu-family;
+    // Page 2 Callbacks
     in-out property <string> input-text;
     // Set Initial Display Parameters
     preferred-width: 1000px;
     preferred-height: 600px;
-    title: "SlintTemplate";
+    title: "MachineInfo";
 
     // Function Callbacks
     callback file-close();
@@ -28,12 +36,19 @@ export component AppWindow inherits Window {
     // Actual Window
     HorizontalLayout {
             side-bar := SideBar {
-                title: @tr("SlintTemplate");
+                title: @tr("MachineInfo");
                 logo-source: @image-url("images/logo.svg");
-                model: [@tr("Menu" => "Page1"), @tr("Menu" => "Page2")];
+                model: [@tr("Menu" => "CPU"), @tr("Menu" => "Page2")];
             }
 
-            if(side-bar.current-item == 0) : Page1 {}
+            if(side-bar.current-item == 0) : Page1 {
+                cpu-id <=> root.cpu-id;
+                cpu-vendor <=> root.cpu-vendor;
+                cpu-speed <=> root.cpu-speed;
+                cpu-cores <=> root.cpu-cores;
+                cpu-usage <=> root.cpu-usage;
+                cpu-family <=> root.cpu-family;
+            }
             if(side-bar.current-item == 1) : Page2 {
                 save-input => { root.save-input() }
                 input-text <=> root.input-text;

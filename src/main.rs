@@ -5,7 +5,7 @@ use std::env;
 use std::error::Error;
 use std::path::PathBuf;
 slint::include_modules!();
-use MachineInfo::{get_cpu_info, get_if_dev};
+use MachineInfo::{get_cpu_info, get_if_dev, get_memory_info};
 
 // Determines the appropriate database file path
 // In development: Displays relevant environment information
@@ -89,7 +89,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_cpu_cores(_cpuid.cores.into());
     ui.set_cpu_usage(_cpuid.usage.into());
     ui.set_cpu_family(_cpuid.family.into());
-    
+
+    // Get memory information
+    let _memory = get_memory_info();
+    ui.set_memory_total(_memory.total.into());
+    ui.set_memory_used(_memory.used.into());
+    ui.set_memory_free(_memory.free.into());
+
     // Create a weak reference for use in callbacks
     let weak = ui.as_weak();
 

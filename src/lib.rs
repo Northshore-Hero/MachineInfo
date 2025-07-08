@@ -9,6 +9,47 @@ pub struct Processor {
     pub usage: String,
 }
 
+pub struct Memory {
+    pub total: String,
+    pub used: String,
+    pub free: String,
+}
+
+pub fn get_memory_info() -> Memory {
+    // Define Constants
+    const _BYTES_TO_GB: f64 = 1073741824.0;
+    // Declare Variables.0
+    let mut _my_memory = Memory {
+        total: "".to_string(),
+        used: "".to_string(),
+        free: "".to_string(),
+    };
+    let mut _running_system = System::new_all();
+
+    // Refresh memory
+    _running_system.refresh_memory();
+
+    let mut _temp_total = _running_system.total_memory() as f64;
+    _temp_total /= _BYTES_TO_GB;
+    _temp_total = (_temp_total * 100.0).round() / 100.0;
+    let mut _temp_free = _running_system.available_memory() as f64;
+    _temp_free /= _BYTES_TO_GB;
+    _temp_free = (_temp_free * 100.0).round() / 100.0;
+    let mut _temp_used = _temp_total - _temp_free;
+    _temp_used = (_temp_used * 100.0).round() / 100.0;
+
+    // Pack the struct
+    _my_memory.total = String::from(_temp_total.to_string());
+    _my_memory.total.push_str(" GB");
+    _my_memory.used = String::from(_temp_used.to_string());
+    _my_memory.used.push_str(" GB");
+    _my_memory.free = String::from(_temp_free.to_string());
+    _my_memory.free.push_str(" GB");
+
+    // Return Memory Info
+    _my_memory
+}
+
 pub fn get_cpu_info() -> Processor {
     // Declare Constants
     const _MHZ_TO_GHZ: f32 = 1000.0;

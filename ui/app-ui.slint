@@ -13,6 +13,10 @@ export component AppWindow inherits Window {
     in property <string> cpu-usage;
     in property <string> cpu-family;
     // Page 2 Callbacks
+    in property <string> memory-total;
+    in property <string> memory-used;
+    in property <string> memory-free;
+    // Page 3 Callbacks
     in-out property <string> input-text;
     // Set Initial Display Parameters
     preferred-width: 1000px;
@@ -56,8 +60,9 @@ export component AppWindow inherits Window {
                 cpu-family <=> root.cpu-family;
             }
             if(side-bar.current-item == 1) : Page2 {
-                save-input => { root.save-input() }
-                input-text <=> root.input-text;
+                memory-total <=> root.memory-total;
+                memory-used <=> root.memory-used;
+                memory-free <=> root.memory-free;
             }
             if(side-bar.current-item == 2) : Page3 {
                 save-input => { root.save-input() }

@@ -4,8 +4,9 @@
 import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton } from "std-widgets.slint";
 
 export component Page2 inherits Window {
-    in-out property <string> input-text: "This is a Line Input";
-    callback save-input();
+    in property <string> memory-total: "Unknown Amount";
+    in property <string> memory-used: "Unknown Amount";
+    in property <string> memory-free: "Unknown Amount";
 
     VerticalBox {
         alignment: LayoutAlignment.start;
@@ -14,6 +15,42 @@ export component Page2 inherits Window {
                 text: "Memory Information";
                 font-size: 20px;
             }
+        }
+        VerticalLayout {
+                    spacing: 0px;
+                    HorizontalBox {
+                        alignment: start;
+                        Text {
+                            text: "Total Memory: ";
+                            horizontal-alignment: left;
+                        }
+                        Text {
+                            text <=> root.memory-total;
+                            horizontal-alignment: right;
+                        }
+                    }
+                    HorizontalBox {
+                        alignment: start;
+                        Text {
+                            text: "Used Memory: ";
+                            horizontal-alignment: left;
+                        }
+                        Text {
+                            text <=> root.memory-used;
+                            horizontal-alignment: right;
+                        }
+                    }
+                    HorizontalBox {
+                        alignment: start;
+                        Text {
+                            text: "Free Memory: ";
+                            horizontal-alignment: left;
+                        }
+                        Text {
+                            text <=> root.memory-free;
+                            horizontal-alignment: right;
+                        }
+                    }
         }
     }
 }

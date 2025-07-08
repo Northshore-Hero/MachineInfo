@@ -2,6 +2,7 @@ import { Button, VerticalBox } from "std-widgets.slint";
 import { SideBar } from "ui_lib/sidebar.slint";
 import { Page1 } from "pages/page1.slint";
 import { Page2 } from "pages/page2.slint";
+import { Page3 } from "pages/page3.slint";
 
 export component AppWindow inherits Window {
     // Page 1 Callbacks
@@ -38,9 +39,10 @@ export component AppWindow inherits Window {
             side-bar := SideBar {
                 title: @tr("MachineInfo");
                 logo-source: @image-url("images/logo.svg");
-                model: [@tr("Menu" => "CPU"), @tr("Menu" => "Page2")];
+                model: [@tr("Menu" => "CPU"), @tr("Menu" => "Memory"), @tr("Menu" => "Misc")];
                 item-icons: [
                     @image-url("images/cpu.svg"),
+                    @image-url("images/memory.svg"),
                     @image-url("images/misc.svg")
                 ];
             }
@@ -54,6 +56,10 @@ export component AppWindow inherits Window {
                 cpu-family <=> root.cpu-family;
             }
             if(side-bar.current-item == 1) : Page2 {
+                save-input => { root.save-input() }
+                input-text <=> root.input-text;
+            }
+            if(side-bar.current-item == 2) : Page3 {
                 save-input => { root.save-input() }
                 input-text <=> root.input-text;
             }

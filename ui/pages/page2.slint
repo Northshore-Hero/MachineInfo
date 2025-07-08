@@ -11,26 +11,8 @@ export component Page2 inherits Window {
         alignment: LayoutAlignment.start;
         HorizontalBox {
             Text {
-                text: "This is a Title";
+                text: "Memory Information";
                 font-size: 20px;
-            }
-        }
-        HorizontalBox {
-            Text {
-                text: "Example Label";
-                vertical-alignment: TextVerticalAlignment.center;
-            }
-            LineEdit {
-                max-height: 20px;
-                text <=> root.input-text;
-            }
-            Button {
-                text: "Save";
-                primary: true;
-                clicked => { save-input() }
-            }
-            Button {
-                text: "Cancel";
             }
         }
     }

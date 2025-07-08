@@ -8,6 +8,7 @@ component SideBarItem inherits Rectangle {
     in property <bool> selected;
     in property <bool> has-focus;
     in-out property <string> text <=> label.text;
+    in property <image> icon;
 
     callback clicked <=> touch.clicked;
 
@@ -43,11 +44,21 @@ component SideBarItem inherits Rectangle {
 
     l := HorizontalBox {
         y: (parent.height - self.height) / 2;
-        spacing: 0px;
+        spacing: 14px;
+        padding-left: 30px;
+
+        Image {
+            width: 20px;
+            height: 20px;
+            source: root.icon;
+            vertical-alignment: center;
+            colorize: whitesmoke;
+        }
 
         label := Text {
             vertical-alignment: center;
             accessible-role: none;
+
         }
     }
 
@@ -61,6 +72,7 @@ export component SideBar inherits Rectangle {
     in property <[string]> model: [];
     in property <string> title <=> label.text;
     in property <image> logo-source;
+    in property <[image]> item-icons: [];
     out property <int> current-item: 0;
     out property <int> current-focused: fs.has-focus ? fs.focused-tab : -1; // The currently focused tab
 
@@ -134,6 +146,7 @@ export component SideBar inherits Rectangle {
                 has-focus: index == root.current-focused;
                 text: item;
                 selected: index == root.current-item;
+                icon: root.item-icons[index];
             }
         }
 

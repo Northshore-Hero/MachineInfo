@@ -39,6 +39,10 @@ export component AppWindow inherits Window {
                 title: @tr("MachineInfo");
                 logo-source: @image-url("images/logo.svg");
                 model: [@tr("Menu" => "CPU"), @tr("Menu" => "Page2")];
+                item-icons: [
+                    @image-url("images/cpu.svg"),
+                    @image-url("images/misc.svg")
+                ];
             }
 
             if(side-bar.current-item == 0) : Page1 {

@@ -5,114 +5,7 @@ use std::env;
 use std::error::Error;
 use std::path::PathBuf;
 slint::include_modules!();
-use sysinfo::{Components, Disks, Networks, System};
-
-struct Processor {
-    name: String,
-    vendor: String,
-    family: String,
-    speed: String,
-    cores: String,
-    usage: String,
-}
-
-fn get_cpu_architecture() -> String {
-    #[cfg(any(target_arch = "x86"))]
-    {
-        return "x86".to_string();
-    }
-    #[cfg(any(target_arch = "x86_64"))]
-    {
-        return "x86_64".to_string();
-    }
-    #[cfg(any(target_arch = "aarch64"))]
-    {
-        return "aarch64".to_string();
-    }
-    #[cfg(any(target_arch = "arm"))]
-    {
-        return "arm".to_string();
-    }
-    #[cfg(any(target_arch = "riscv32"))]
-    {
-        return "riscv32".to_string();
-    }
-    #[cfg(any(target_arch = "riscv64"))]
-    {
-        return "riscv64".to_string();
-    }
-    #[cfg(any(target_arch = "powerpc"))]
-    {
-        return "powerpc".to_string();
-    }
-    #[cfg(any(target_arch = "powerpc64"))]
-    {
-        return "powerpc64".to_string();
-    }
-    #[cfg(any(target_arch = "mips"))]
-    {
-        return "mips".to_string();
-    }
-    #[cfg(any(target_arch = "mips64"))]
-    {
-        return "mips64".to_string();
-    }
-    //TODO add more architectures
-    return "Unknown Architecture".to_string();
-}
-
-fn get_cpu_info() -> Processor {
-    // Declare Constants
-    const _MHZ_TO_GHZ: f32 = 1000.0;
-    // Declare Variables
-    let mut _running_system = System::new_all();
-    let mut _cpu_count = 0;
-    let mut _my_processor = Processor {
-        name: "".to_string(),
-        vendor: "".to_string(),
-        family: "".to_string(),
-        speed: "".to_string(),
-        cores: "".to_string(),
-        usage: "".to_string(),
-    };
-    
-    // Define CPU Info
-    _running_system.refresh_cpu_all();
-    let _my_cpu = _running_system.cpus().first().unwrap();
-    
-    // Count the number of cores
-    for cpu in _running_system.cpus() {
-        _cpu_count += 1;
-    }
-
-    // Get speed in Ghz
-    // cast frequency into a float
-    let _temp_freq: f32 = _my_cpu.frequency() as f32;
-    let _my_speed: f32 = _temp_freq / _MHZ_TO_GHZ;
-    
-    // Pack Struct
-    _my_processor.name = String::from(_my_cpu.brand());
-    _my_processor.vendor = String::from(_my_cpu.vendor_id());
-    _my_processor.cores = String::from(_cpu_count.to_string());
-    //Overwrite the string to concatenate the units
-    _my_processor.speed = String::from(_my_speed.to_string());
-    _my_processor.speed.push_str(" GHz");
-    _my_processor.usage = String::from(_my_cpu.cpu_usage().to_string());
-    _my_processor.family = get_cpu_architecture();
-    
-    // Return Processor Info
-    _my_processor
-}
-
-// Determines the execution environment based on debug assertions
-// Returns Some(true) for development mode, Some(false) for release mode
-fn get_if_dev() -> Option<bool> {
-    if cfg!(debug_assertions) {
-        Some(true)
-    } else {
-        Some(false)
-    }
-}
+use MachineInfo::{get_cpu_info, get_if_dev};
 
 // Determines the appropriate database file path
 // In development: Displays relevant environment information
@@ -122,19 +15,10 @@ fn get_db_path() -> PathBuf {
 
     if _if_dev == Some(true) {
         println!("Running in dev mode");
-
         let mut _dev_path = PathBuf::new();
         _dev_path.push(env::current_exe().unwrap());
         _dev_path = _dev_path.parent().unwrap().join("app.db");
         _dev_path
-        // Attempts to locate the database alongside the executable
-        // Fall back to the local directory if an executable path is unavailable
-        //env::current_exe()
-        //    .map(|exe_path| exe_path.parent().unwrap_or(&exe_path).join("app.db"))
-        //    .unwrap_or_else(|_| {
-        //        eprintln!("Warning: Couldn't determine executable path, using local path");
-        //        PathBuf::from("app.db")
-        //    })
     }
     else {
         println!("Running in release mode");

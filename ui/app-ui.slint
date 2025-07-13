@@ -28,6 +28,11 @@ export component AppWindow inherits Window {
     callback save-input();
     callback file-refresh();
 
+    Timer {
+        interval: 1s;
+        triggered => { file-refresh(); }
+    }
+
     // Create a Menubar
     MenuBar {
         Menu {

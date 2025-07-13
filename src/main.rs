@@ -4,6 +4,8 @@ use rusqlite::{Connection, Result as SqliteResult};
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
+use sysinfo::System;
+
 slint::include_modules!();
 use MachineInfo::{get_cpu_info, get_if_dev, get_memory_info};
 
@@ -69,6 +71,14 @@ fn get_saved_entry(conn: &Connection) -> SqliteResult<String> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // Initialize connection to computer
+    let mut _running_system = System::new_all();
+    _running_system.refresh_all();
+
+    // Get system information
+    let _cpuid = get_cpu_info(&mut _running_system);
+    let _memory = get_memory_info(&mut _running_system);
+
     // Initialize database connection
     let conn = init_db()?;
 
@@ -80,9 +90,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         ui.set_input_text(saved_entry.into());
     }
 
-    // Get CPU information
-    let _cpuid = get_cpu_info();
-    // Pass it through to the UI
+    // Pass CPU to UI
     ui.set_cpu_id(_cpuid.name.into());
     ui.set_cpu_vendor(_cpuid.vendor.into());
     ui.set_cpu_speed(_cpuid.speed.into());
@@ -90,30 +98,49 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_cpu_usage(_cpuid.usage.into());
     ui.set_cpu_family(_cpuid.family.into());
 
-    // Get memory information
-    let _memory = get_memory_info();
+    // Pass Memory to UI
     ui.set_memory_total(_memory.total.into());
     ui.set_memory_used(_memory.used.into());
     ui.set_memory_free(_memory.free.into());
 
-    // Create a weak reference for use in callbacks
-    let weak = ui.as_weak();
+    // Refresh
+    ui.on_file_refresh({
+        let ui_handle = ui.as_weak();
+        move || {
+            let ui = ui_handle.unwrap();
+            // Get system information
+            let _cpuid = get_cpu_info(&mut _running_system);
+            let _memory = get_memory_info(&mut _running_system);
+            // Pass CPU to UI
+            ui.set_cpu_id(_cpuid.name.into());
+            ui.set_cpu_vendor(_cpuid.vendor.into());
+            ui.set_cpu_speed(_cpuid.speed.into());
+            ui.set_cpu_cores(_cpuid.cores.into());
+            ui.set_cpu_usage(_cpuid.usage.into());
+            ui.set_cpu_family(_cpuid.family.into());
+            // Pass Memory to UI
+            ui.set_memory_total(_memory.total.into());
+            ui.set_memory_used(_memory.used.into());
+            ui.set_memory_free(_memory.free.into());
+        }
+    });
 
-    // Configure save input handler
-    ui.on_save_input(move || {
-        let ui = weak.unwrap();
-        let input_text = ui.get_input_text().to_string();
-
-        // Persist current input state
-        match conn.execute(
-            "UPDATE inputs SET content = ?1, created_at = CURRENT_TIMESTAMP WHERE id = 1",
-            [&input_text],
-        ) {
-            Ok(_) => {
-                println!("Successfully saved to database!");
-            }
-            Err(e) => {
-                eprintln!("Error saving to database: {}", e);
+    ui.on_save_input({
+        let ui_handle = ui.as_weak();
+        move || {
+            let ui = ui_handle.unwrap();
+            let input_text = ui.get_input_text().to_string();
+            println!("Saving input: {}", input_text);
+            match conn.execute(
+                "UPDATE inputs SET content = ?1, created_at = CURRENT_TIMESTAMP WHERE id = 1",
+                [&input_text],
+            ) {
+                Ok(_) => {
+                    println!("Successfully saved to database!");
+                }
+                Err(e) => {
+                    eprintln!("Error saving to database: {}", e);
+                }
             }
         }
     });

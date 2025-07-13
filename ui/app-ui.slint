@@ -25,12 +25,17 @@ export component AppWindow inherits Window {
 
     // Function Callbacks
     callback file-close();
-    callback save-input(); // Add this line
+    callback save-input();
+    callback file-refresh();
 
     // Create a Menubar
     MenuBar {
         Menu {
             title: "File";
+            MenuItem {
+                title: "Refresh";
+                activated => { file-refresh(); }
+            }
             MenuItem {
                 title: "Close";
                 activated => { file-close(); }

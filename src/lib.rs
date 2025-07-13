@@ -15,7 +15,8 @@ pub struct Memory {
     pub free: String,
 }
 
-pub fn get_memory_info() -> Memory {
+pub fn get_memory_info(_passed_system: &mut System) -> Memory {
+    let _running_system = _passed_system;
     // Define Constants
     const _BYTES_TO_GB: f64 = 1073741824.0;
     // Declare Variables.0
@@ -24,8 +25,6 @@ pub fn get_memory_info() -> Memory {
         used: "".to_string(),
         free: "".to_string(),
     };
-    let mut _running_system = System::new_all();
-
     // Refresh memory
     _running_system.refresh_memory();
 
@@ -50,11 +49,11 @@ pub fn get_memory_info() -> Memory {
     _my_memory
 }
 
-pub fn get_cpu_info() -> Processor {
+pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
+    let _running_system = _passed_system;
     // Declare Constants
     const _MHZ_TO_GHZ: f32 = 1000.0;
     // Declare Variables
-    let mut _running_system = System::new_all();
     let mut _cpu_count = 0;
     let mut _my_processor = Processor {
         name: "".to_string(),

@@ -174,6 +174,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         std::process::exit(0);
     });
 
+    // Configure launching of application
+    let weak_app = ui.as_weak();
+    slint::invoke_from_event_loop(move || {
+        println!("{:?}", weak_app.unwrap().window().position());
+        // Set the window position to specific x, y coordinates
+        weak_app.unwrap().window().set_position(slint::PhysicalPosition::new(600, 300));
+    }).unwrap();
+
     // Launch application event loop
     ui.run()?;
     Ok(())

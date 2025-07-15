@@ -14,43 +14,46 @@ export component Page2 inherits Window {
             Text {
                 text: "Memory Information";
                 font-size: 20px;
+                font-weight: 800;
             }
         }
         VerticalLayout {
-                    spacing: 0px;
-                    HorizontalBox {
-                        alignment: start;
-                        Text {
-                            text: "Total Memory: ";
-                            horizontal-alignment: left;
-                        }
-                        Text {
-                            text <=> root.memory-total;
-                            horizontal-alignment: right;
-                        }
-                    }
-                    HorizontalBox {
-                        alignment: start;
-                        Text {
-                            text: "Used Memory: ";
-                            horizontal-alignment: left;
-                        }
-                        Text {
-                            text <=> root.memory-used;
-                            horizontal-alignment: right;
-                        }
-                    }
-                    HorizontalBox {
-                        alignment: start;
-                        Text {
-                            text: "Free Memory: ";
-                            horizontal-alignment: left;
-                        }
-                        Text {
-                            text <=> root.memory-free;
-                            horizontal-alignment: right;
-                        }
-                    }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Total Memory: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.memory-total;
+                    horizontal-alignment: right;
+                }
+            }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Used Memory: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.memory-used;
+                    horizontal-alignment: right;
+                }
+            }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Free Memory: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.memory-free;
+                    horizontal-alignment: right;
+                }
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ export component Page3 inherits Window {
             Text {
                 text: "This is a Title";
                 font-size: 20px;
+                font-weight: 800;
             }
         }
         HorizontalBox {
@@ -24,13 +25,14 @@ export component Page3 inherits Window {
                 max-height: 20px;
                 text <=> root.input-text;
             }
-            Button {
-                text: "Save";
+            StandardButton {
+                kind: apply;
                 primary: true;
                 clicked => { save-input() }
             }
-            Button {
-                text: "Cancel";
+            StandardButton {
+                kind: reset;
+                clicked => { root.input-text = "Initial Setting" }
             }
         }
         StandardTableView {

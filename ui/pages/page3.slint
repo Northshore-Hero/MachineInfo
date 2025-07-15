@@ -1,7 +1,7 @@
 // Copyright © SixtyFPS GmbH <info@slint.dev>
 // SPDX-License-Identifier: MIT
 
-import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton } from "std-widgets.slint";
+import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton, StandardTableView } from "std-widgets.slint";
 
 export component Page3 inherits Window {
     in-out property <string> input-text: "This is a Line Input";
@@ -33,5 +33,22 @@ export component Page3 inherits Window {
                 text: "Cancel";
             }
         }
+        StandardTableView {
+                columns: [
+                    { title: "Item ID" },
+                    { title: "Item Value" },
+                ];
+                rows: [
+                    [
+                        { text: "Item 1" }, { text: root.input-text },
+                    ],
+                    [
+                        { text: "Item 1" }, { text: "Item 2" },
+                    ],
+                    [
+                        { text: "Item 1" }, { text: "Item 2" },
+                    ]
+                ];
+            }
     }
 }

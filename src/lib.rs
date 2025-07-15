@@ -77,6 +77,11 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     // cast frequency into a float
     let _temp_freq: f32 = _my_cpu.frequency() as f32;
     let _my_speed: f32 = _temp_freq / _MHZ_TO_GHZ;
+    let _my_speed = (_my_speed * 100.0).round() / 100.0;
+
+    // Fix the usage to a certain length
+    let _temp_usage: f32 = _my_cpu.cpu_usage() as f32;
+    let _my_usage = (_temp_usage * 100.0).round() / 100.0;
 
     // Pack Struct
     _my_processor.name = String::from(_my_cpu.brand());
@@ -85,7 +90,8 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     //Overwrite the string to concatenate the units
     _my_processor.speed = String::from(_my_speed.to_string());
     _my_processor.speed.push_str(" GHz");
-    _my_processor.usage = String::from(_my_cpu.cpu_usage().to_string());
+    _my_processor.usage = String::from(_my_usage.to_string());
+    _my_processor.usage.push_str(" %");
     _my_processor.family = get_cpu_architecture();
 
     // Return Processor Info

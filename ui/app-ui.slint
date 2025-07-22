@@ -3,6 +3,8 @@ import { SideBar } from "ui_lib/sidebar.slint";
 import { Page1 } from "pages/page1.slint";
 import { Page2 } from "pages/page2.slint";
 import { Page3 } from "pages/page3.slint";
+import "../fonts/IBMPlexSans-Text.ttf";
+import "../fonts/IBMPlexSans-Bold.ttf";
 
 export component AppWindow inherits Window {
     // Page 1 Callbacks
@@ -22,6 +24,9 @@ export component AppWindow inherits Window {
     preferred-width: 1000px;
     preferred-height: 600px;
     title: "MachineInfo";
+
+    //Set Default Font
+    //default-font-family: "IBM Plex Sans";
 
     // Function Callbacks
     callback file-close();

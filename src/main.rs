@@ -5,9 +5,15 @@ use std::env;
 use std::error::Error;
 use std::path::PathBuf;
 use sysinfo::System;
+use std::sync::Arc;  // Add this import
 
 slint::include_modules!();
 use MachineInfo::{get_cpu_info, get_if_dev, get_memory_info};
+
+struct Dimension {
+    x_position: String,
+    y_position: String
+}
 
 // Determines the appropriate database file path
 // In development: Displays relevant environment information
@@ -38,7 +44,7 @@ fn get_db_path() -> PathBuf {
             }
         }
         
-        // Fallback to home directory if we can't access the app bundle
+        // Fallback to the home directory if we can't access the app bundle
         if _release_path.parent().is_none() {
             _release_path = env::home_dir()
                 .unwrap()
@@ -59,26 +65,29 @@ fn get_db_path() -> PathBuf {
     }
 }
 
-// Initializes the SQLite database with required schema
-// Creates a single-row table for storing application input
 fn init_db() -> SqliteResult<Connection> {
     let db_path = get_db_path();
     println!("Using database at: {}", db_path.display());
     let conn = Connection::open(db_path)?;
 
-    // Initialize the inputs table with id constraint
+    // Create the table only if it doesn't exist
     conn.execute(
-        "CREATE TABLE IF NOT EXISTS inputs (
-            id INTEGER PRIMARY KEY CHECK (id = 1),
+        "CREATE TABLE IF NOT EXISTS UserSettings (
+            id INTEGER PRIMARY KEY,
+            item_name TEXT NOT NULL,
             content TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )",
         [],
     )?;
 
-    // Ensure default record exists
+    // Insert default values ONLY if they don't exist (using INSERT OR IGNORE)
     conn.execute(
-        "INSERT OR IGNORE INTO inputs (id, content) VALUES (1, 'Initial Setting')",
+        "INSERT OR IGNORE INTO UserSettings (id, item_name, content)
+         VALUES 
+            (1, 'Default Entry', 'Initial Setting'),
+            (2, 'WindowWidth', '600'),
+            (3, 'WindowHeight', '300')",
         [],
     )?;
 
@@ -88,9 +97,43 @@ fn init_db() -> SqliteResult<Connection> {
 // Retrieves the currently stored entry from the database
 // Returns: Result containing the stored content string
 fn get_saved_entry(conn: &Connection) -> SqliteResult<String> {
-    conn.query_row("SELECT content FROM inputs WHERE id = 1", [], |row| {
+    conn.query_row("SELECT content FROM UserSettings WHERE id = 1", [], |row| {
         row.get(0)
     })
+}
+
+fn set_saved_entry(conn: &Connection, entry: &str) {
+    conn.execute(
+        "UPDATE UserSettings SET content = ?1 WHERE id = 1",
+        [entry],
+    ).expect("Unable to Save Entry");
+}
+
+fn set_window_position(conn: &Connection, width: i32, height: i32) {
+    conn.execute(
+        "REPLACE INTO UserSettings (id, item_name, content)
+         VALUES
+            (2, 'WindowWidth', ?1),
+            (3, 'WindowHeight', ?2)",
+        [width, height],
+    ).expect("Unable to Save Window Position");
+}
+
+fn get_window_position(conn: &Connection) -> Dimension {
+    let mut my_dimension: Dimension = Dimension { x_position: "".to_string(), y_position: "".to_string() };
+    my_dimension.x_position = conn.query_row(
+        "SELECT content FROM UserSettings WHERE item_name = 'WindowWidth'",
+        [],
+        |row| row.get(0)
+    ).expect("Read Failure");
+
+    my_dimension.y_position = conn.query_row(
+        "SELECT content FROM UserSettings WHERE item_name = 'WindowHeight'",
+        [],
+        |row| row.get(0)
+    ).expect("Read Failure");
+    // Return the dimensions
+    my_dimension
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -102,8 +145,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let _cpuid = get_cpu_info(&mut _running_system);
     let _memory = get_memory_info(&mut _running_system);
 
-    // Initialize database connection
-    let conn = init_db()?;
+    // Initialize the database connection and wrap it in Arc (allows multiple conn.executes)
+    let conn = Arc::new(init_db()?);
 
     // Initialize UI components
     let ui = AppWindow::new()?;
@@ -150,36 +193,32 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     ui.on_save_input({
         let ui_handle = ui.as_weak();
+        let conn = Arc::clone(&conn);
         move || {
             let ui = ui_handle.unwrap();
             let input_text = ui.get_input_text().to_string();
             println!("Saving input: {}", input_text);
-            match conn.execute(
-                "UPDATE inputs SET content = ?1, created_at = CURRENT_TIMESTAMP WHERE id = 1",
-                [&input_text],
-            ) {
-                Ok(_) => {
-                    println!("Successfully saved to database!");
-                }
-                Err(e) => {
-                    eprintln!("Error saving to database: {}", e);
-                }
-            }
+            set_saved_entry(&conn, &input_text);
         }
     });
 
     // Configure application termination handler
-    ui.on_file_close(|| {
-        println!("Closing Application");
-        std::process::exit(0);
+    ui.on_file_close({
+        let ui_handle = ui.as_weak();
+        let conn = Arc::clone(&conn);
+        move || {
+            println!("{:?}", ui_handle.unwrap().window().position());
+            set_window_position(&conn, ui_handle.unwrap().window().position().x, ui_handle.unwrap().window().position().y);
+            std::process::exit(0);
+        }
     });
 
     // Configure launching of application
     let weak_app = ui.as_weak();
+    let dimensions = get_window_position(&conn);
     slint::invoke_from_event_loop(move || {
-        println!("{:?}", weak_app.unwrap().window().position());
         // Set the window position to specific x, y coordinates
-        weak_app.unwrap().window().set_position(slint::PhysicalPosition::new(600, 300));
+        weak_app.unwrap().window().set_position(slint::PhysicalPosition::new(dimensions.x_position.parse().unwrap(), dimensions.y_position.parse().unwrap()));
     }).unwrap();
 
     // Launch application event loop

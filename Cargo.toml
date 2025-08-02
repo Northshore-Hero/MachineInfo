@@ -1,6 +1,6 @@
 [package]
-name = "MachineInfo"
-version = "0.1.0"
+name = "machine_info"
+version = "0.1.2"
 edition = "2024"
 
 [dependencies]

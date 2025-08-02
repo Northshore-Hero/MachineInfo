@@ -8,7 +8,7 @@ use sysinfo::System;
 use std::sync::Arc;  // Add this import
 
 slint::include_modules!();
-use MachineInfo::{get_cpu_info, get_if_dev, get_memory_info};
+use machine_info::{get_cpu_info, get_if_dev, get_memory_info};
 
 struct Dimension {
     x_position: String,

@@ -69,7 +69,7 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     let _my_cpu = _running_system.cpus().first().unwrap();
 
     // Count the number of cores
-    for cpu in _running_system.cpus() {
+    for _cpu in _running_system.cpus() {
         _cpu_count += 1;
     }
 
@@ -97,6 +97,8 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     // Return Processor Info
     _my_processor
 }
+
+#[allow(unreachable_code)]
 pub fn get_cpu_architecture() -> String {
     #[cfg(any(target_arch = "x86"))]
     {

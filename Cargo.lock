@@ -3,16 +3,6 @@
 version = 4
 
 [[package]]
-name = "MachineInfo"
-version = "0.1.0"
-dependencies = [
- "rusqlite",
- "slint",
- "slint-build",
- "sysinfo",
-]
-
-[[package]]
 name = "ab_glyph"
 version = "0.2.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2603,6 +2593,16 @@ checksum = "0047f508cd7a85ad6bad9518f68cce7b1bf6b943fb71f6da0ee3bc1e8cb75f25"
 dependencies = [
  "lyon_geom",
  "num-traits",
+]
+
+[[package]]
+name = "machine_info"
+version = "0.1.2"
+dependencies = [
+ "rusqlite",
+ "slint",
+ "slint-build",
+ "sysinfo",
 ]
 
 [[package]]

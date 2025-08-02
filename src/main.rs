@@ -212,6 +212,16 @@ fn main() -> Result<(), Box<dyn Error>> {
             std::process::exit(0);
         }
     });
+    
+    ui.window().on_close_requested({
+        let ui_handle = ui.as_weak();
+        let conn = Arc::clone(&conn);
+        move || {
+            println!("{:?}", ui_handle.unwrap().window().position());
+            set_window_position(&conn, ui_handle.unwrap().window().position().x, ui_handle.unwrap().window().position().y);
+            std::process::exit(0);
+        }
+    });
 
     // Configure launching of application
     let weak_app = ui.as_weak();

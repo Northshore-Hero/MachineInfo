@@ -137,11 +137,11 @@ fn get_window_position(conn: &Connection) -> Dimension {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    println!("=> disks:");
+    //println!("=> disks:");
     let mut disks = Disks::new_with_refreshed_list();
-    for disk in &disks {
-        println!("{disk:?}");
-    }
+    //for disk in &disks {
+    //    println!("{disk:?}");
+    //}
     // Initialize connection to disks
 
     // Initialize connection to computer
@@ -179,6 +179,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Pass Storage to UI
     ui.set_storage_name(_storage.name.into());
+    ui.set_storage_total(_storage.total_space.into());
+    ui.set_storage_used(_storage.used_space.into());
+    ui.set_storage_free(_storage.free_space.into());
 
     // Refresh
     ui.on_file_refresh({

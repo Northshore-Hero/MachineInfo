@@ -2,55 +2,72 @@
 // SPDX-License-Identifier: MIT
 
 import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton, StandardTableView } from "std-widgets.slint";
+import { Page1 } from "page1.slint";
 
 export component Page3 inherits Window {
-    in-out property <string> input-text: "This is a Line Input";
-    callback save-input();
+    in property <string> storage-name: "Unknown Name";
+    in property <string> storage-total: "Unknown Amount";
+    in property <string> storage-used: "Unknown Amount";
+    in property <string> storage-free: "Unknown Amount";
 
     VerticalBox {
         alignment: LayoutAlignment.start;
         HorizontalBox {
             Text {
-                text: "This is a Title";
+                text: "Storage Information";
                 font-size: 20px;
                 font-weight: 800;
             }
         }
-        HorizontalBox {
-            Text {
-                text: "Example Label";
-                vertical-alignment: TextVerticalAlignment.center;
+        VerticalLayout {
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Drive Name: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.storage-name;
+                    horizontal-alignment: right;
+                }
             }
-            LineEdit {
-                max-height: 20px;
-                text <=> root.input-text;
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Total Storage: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.storage-total;
+                    horizontal-alignment: right;
+                }
             }
-            StandardButton {
-                kind: apply;
-                primary: true;
-                clicked => { save-input() }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Used Storage: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.storage-used;
+                    horizontal-alignment: right;
+                }
             }
-            StandardButton {
-                kind: reset;
-                clicked => { root.input-text = "Initial Setting" }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Free Storage: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.storage-free;
+                    horizontal-alignment: right;
+                }
             }
         }
-        StandardTableView {
-                columns: [
-                    { title: "Item ID" },
-                    { title: "Item Value" },
-                ];
-                rows: [
-                    [
-                        { text: "Item 1" }, { text: root.input-text },
-                    ],
-                    [
-                        { text: "Item 1" }, { text: "Item 2" },
-                    ],
-                    [
-                        { text: "Item 1" }, { text: "Item 2" },
-                    ]
-                ];
-            }
     }
 }

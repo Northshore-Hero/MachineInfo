@@ -1,4 +1,17 @@
-use sysinfo::System;
+use sysinfo::{System, Disks};
+
+pub struct Storage {
+    pub name: String,
+    pub size: String,
+    pub usage: String,
+    pub mount_point: String,
+    pub file_system: String,
+    pub type_: String,
+    pub total_space: String,
+    pub available_space: String,
+    pub used_space: String,
+    pub percent_used: String,
+}
 
 pub struct Processor {
     pub name: String,
@@ -13,6 +26,29 @@ pub struct Memory {
     pub total: String,
     pub used: String,
     pub free: String,
+}
+
+pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
+    // Declare Variables
+    let _running_disks = _passed_disks;
+    let mut _my_storage = Storage {
+        name: "".to_string(),
+        size: "".to_string(),
+        usage: "".to_string(),
+        mount_point: "".to_string(),
+        file_system: "".to_string(),
+        type_: "".to_string(),
+        total_space: "".to_string(),
+        available_space: "".to_string(),
+        used_space: "".to_string(),
+        percent_used: "".to_string(),
+    };
+    // Define disk Info
+    let _my_temp = _running_disks.first().unwrap().name();
+    let _my_temp2 = _my_temp.to_str();
+    _my_storage.name = String::from(_my_temp2.unwrap());
+    // Return a packed struct
+    _my_storage
 }
 
 pub fn get_memory_info(_passed_system: &mut System) -> Memory {

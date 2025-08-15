@@ -5,11 +5,11 @@ edition = "2024"
 
 [dependencies]
 rusqlite = { version = "0.37.0", features = ["bundled"] }
-slint = "1.12.0"
+slint = "1.12.1"
 sysinfo = "0.37.0"
 
 [build-dependencies]
-slint-build = "1.12.0"
+slint-build = "1.12.1"
 
 [package.metadata.bundle]
 name = "Machine Info"

@@ -4,11 +4,11 @@ use rusqlite::{Connection, Result as SqliteResult};
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
-use sysinfo::System;
+use sysinfo::{System, Disks};
 use std::sync::Arc;  // Add this import
 
 slint::include_modules!();
-use machine_info::{get_cpu_info, get_if_dev, get_memory_info};
+use machine_info::{get_cpu_info, get_if_dev, get_memory_info, get_storage_info};
 
 struct Dimension {
     x_position: String,
@@ -137,6 +137,13 @@ fn get_window_position(conn: &Connection) -> Dimension {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    //println!("=> disks:");
+    let mut disks = Disks::new_with_refreshed_list();
+    //for disk in &disks {
+    //    println!("{disk:?}");
+    //}
+    // Initialize connection to disks
+
     // Initialize connection to computer
     let mut _running_system = System::new_all();
     _running_system.refresh_all();
@@ -144,6 +151,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Get system information
     let _cpuid = get_cpu_info(&mut _running_system);
     let _memory = get_memory_info(&mut _running_system);
+    let _storage = get_storage_info(&mut disks);
 
     // Initialize the database connection and wrap it in Arc (allows multiple conn.executes)
     let conn = Arc::new(init_db()?);
@@ -168,6 +176,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_memory_total(_memory.total.into());
     ui.set_memory_used(_memory.used.into());
     ui.set_memory_free(_memory.free.into());
+
+    // Pass Storage to UI
+    ui.set_storage_name(_storage.name.into());
+    ui.set_storage_total(_storage.total_space.into());
+    ui.set_storage_used(_storage.used_space.into());
+    ui.set_storage_free(_storage.free_space.into());
 
     // Refresh
     ui.on_file_refresh({

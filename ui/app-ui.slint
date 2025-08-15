@@ -3,6 +3,7 @@ import { SideBar } from "ui_lib/sidebar.slint";
 import { Page1 } from "pages/page1.slint";
 import { Page2 } from "pages/page2.slint";
 import { Page3 } from "pages/page3.slint";
+import { Page4 } from "pages/page4.slint";
 import "../fonts/IBMPlexSans-Text.ttf";
 import "../fonts/IBMPlexSans-Bold.ttf";
 
@@ -18,7 +19,12 @@ export component AppWindow inherits Window {
     in property <string> memory-total;
     in property <string> memory-used;
     in property <string> memory-free;
-    // Page 3 Callbacks
+    //Page 3 Callbacks
+    in property <string> storage-name;
+    in property <string> storage-total;
+    in property <string> storage-used;
+    in property <string> storage-free;
+    // Page 4 Callbacks
     in-out property <string> input-text;
     // Set Initial Display Parameters
     preferred-width: 1000px;
@@ -58,10 +64,11 @@ export component AppWindow inherits Window {
             side-bar := SideBar {
                 title: @tr("MachineInfo");
                 logo-source: @image-url("icons/MachineInfo.png");
-                model: [@tr("Menu" => "CPU"), @tr("Menu" => "Memory"), @tr("Menu" => "Misc")];
+                model: [@tr("Menu" => "CPU"), @tr("Menu" => "Memory"), @tr("Menu" => "Storage"), @tr("Menu" => "Misc")];
                 item-icons: [
                     @image-url("images/cpu.svg"),
                     @image-url("images/memory.svg"),
+                    @image-url("images/storage.svg"),
                     @image-url("images/misc.svg")
                 ];
             }
@@ -80,8 +87,15 @@ export component AppWindow inherits Window {
                 memory-free <=> root.memory-free;
             }
             if(side-bar.current-item == 2) : Page3 {
+                storage-name <=> root.storage-name;
+                storage-total <=> root.storage-total;
+                storage-used <=> root.storage-used;
+                storage-free <=> root.storage-free;
+            }
+            if(side-bar.current-item == 3) : Page4 {
                 save-input => { root.save-input() }
                 input-text <=> root.input-text;
             }
+
     }
 }

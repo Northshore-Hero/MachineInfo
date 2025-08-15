@@ -1,4 +1,16 @@
-use sysinfo::System;
+use sysinfo::{System, Disks};
+
+pub struct Storage {
+    pub name: String,
+    pub usage: String,
+    pub mount_point: String,
+    pub file_system: String,
+    pub type_: String,
+    pub total_space: String,
+    pub free_space: String,
+    pub used_space: String,
+    pub percent_used: String,
+}
 
 pub struct Processor {
     pub name: String,
@@ -13,6 +25,37 @@ pub struct Memory {
     pub total: String,
     pub used: String,
     pub free: String,
+}
+
+pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
+    // Declare Variables
+    let _running_disks = _passed_disks;
+    let mut _my_storage = Storage {
+        name: "".to_string(),
+        usage: "".to_string(),
+        mount_point: "".to_string(),
+        file_system: "".to_string(),
+        type_: "".to_string(),
+        total_space: "".to_string(),
+        free_space: "".to_string(),
+        used_space: "".to_string(),
+        percent_used: "".to_string(),
+    };
+    // Define disk Info
+    let unwrapped_disk_name = _running_disks.first().unwrap().name();
+    let disk_name = unwrapped_disk_name.to_str();
+    let unwrapped_disk_size = _running_disks.first().unwrap().total_space();
+    let disk_size = unwrapped_disk_size.to_string();
+    let unwrapped_disk_space = _running_disks.first().unwrap().available_space();
+    let used_space = unwrapped_disk_size - unwrapped_disk_space;
+    let unwrapped_used_space = used_space.to_string();
+    // Pack the Struct
+    _my_storage.name = String::from(disk_name.unwrap());
+    _my_storage.total_space = String::from(disk_size);
+    _my_storage.free_space = String::from(unwrapped_disk_space.to_string());
+    _my_storage.used_space = String::from(unwrapped_used_space);
+    // Return a packed struct
+    _my_storage
 }
 
 pub fn get_memory_info(_passed_system: &mut System) -> Memory {

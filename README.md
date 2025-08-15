@@ -11,17 +11,13 @@ To make changes to the project:
 3. Run `cargo build` to check for compilation errors
 4. Use `cargo run` to test your changes
 
-## Database Location
-
-TBD - Will fill in Later
-
 ## License
 
-MIT License
+GPLv3 License
 
 Copyright (c) 2025 Daniel Mattila
 
-[Full MIT License Text](LICENSE)
+[Full GPLv3](LICENSE)
 
 ## Contact
 

@@ -29,6 +29,7 @@ pub struct Memory {
 
 pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
     // Declare Variables
+    const _BYTES_TO_GB: f64 = 1000000000.0;
     let _running_disks = _passed_disks;
     let mut _my_storage = Storage {
         name: "".to_string(),
@@ -44,9 +45,9 @@ pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
     // Define disk Info
     let unwrapped_disk_name = _running_disks.first().unwrap().name();
     let disk_name = unwrapped_disk_name.to_str();
-    let unwrapped_disk_size = _running_disks.first().unwrap().total_space();
+    let unwrapped_disk_size = _running_disks.first().unwrap().total_space() as f64 / _BYTES_TO_GB;
     let disk_size = unwrapped_disk_size.to_string();
-    let unwrapped_disk_space = _running_disks.first().unwrap().available_space();
+    let unwrapped_disk_space = _running_disks.first().unwrap().available_space() as f64 / _BYTES_TO_GB;
     let used_space = unwrapped_disk_size - unwrapped_disk_space;
     let unwrapped_used_space = used_space.to_string();
     // Pack the Struct
@@ -61,7 +62,7 @@ pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
 pub fn get_memory_info(_passed_system: &mut System) -> Memory {
     let _running_system = _passed_system;
     // Define Constants
-    const _BYTES_TO_GB: f64 = 1073741824.0;
+    const _BYTES_TO_GB: f64 = 1024.0 * 1024.0 * 1024.0;
     // Declare Variables.0
     let mut _my_memory = Memory {
         total: "".to_string(),
@@ -71,14 +72,9 @@ pub fn get_memory_info(_passed_system: &mut System) -> Memory {
     // Refresh memory
     _running_system.refresh_memory();
 
-    let mut _temp_total = _running_system.total_memory() as f64;
-    _temp_total /= _BYTES_TO_GB;
-    _temp_total = (_temp_total * 100.0).round() / 100.0;
-    let mut _temp_free = _running_system.available_memory() as f64;
-    _temp_free /= _BYTES_TO_GB;
-    _temp_free = (_temp_free * 100.0).round() / 100.0;
+    let mut _temp_total = _running_system.total_memory() as f64 / _BYTES_TO_GB;
+    let mut _temp_free = _running_system.available_memory() as f64 / _BYTES_TO_GB;
     let mut _temp_used = _temp_total - _temp_free;
-    _temp_used = (_temp_used * 100.0).round() / 100.0;
 
     // Pack the struct
     _my_memory.total = String::from(_temp_total.to_string());

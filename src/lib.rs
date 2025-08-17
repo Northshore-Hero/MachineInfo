@@ -46,15 +46,13 @@ pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
     let unwrapped_disk_name = _running_disks.first().unwrap().name();
     let disk_name = unwrapped_disk_name.to_str();
     let unwrapped_disk_size = _running_disks.first().unwrap().total_space() as f64 / _BYTES_TO_GB;
-    let disk_size = unwrapped_disk_size.to_string();
     let unwrapped_disk_space = _running_disks.first().unwrap().available_space() as f64 / _BYTES_TO_GB;
     let used_space = unwrapped_disk_size - unwrapped_disk_space;
-    let unwrapped_used_space = used_space.to_string();
     // Pack the Struct
     _my_storage.name = String::from(disk_name.unwrap());
-    _my_storage.total_space = String::from(disk_size);
-    _my_storage.free_space = String::from(unwrapped_disk_space.to_string());
-    _my_storage.used_space = String::from(unwrapped_used_space);
+    _my_storage.total_space = format!("{:.2} GB", unwrapped_disk_size);
+    _my_storage.free_space = format!("{:.2} GB", unwrapped_disk_space);
+    _my_storage.used_space = format!("{:.2} GB", used_space);
     // Return a packed struct
     _my_storage
 }
@@ -73,16 +71,13 @@ pub fn get_memory_info(_passed_system: &mut System) -> Memory {
     _running_system.refresh_memory();
 
     let mut _temp_total = _running_system.total_memory() as f64 / _BYTES_TO_GB;
-    let mut _temp_free = _running_system.available_memory() as f64 / _BYTES_TO_GB;
-    let mut _temp_used = _temp_total - _temp_free;
+    let _temp_free = _running_system.available_memory() as f64 / _BYTES_TO_GB;
+    let _temp_used = _temp_total - _temp_free;
 
     // Pack the struct
-    _my_memory.total = String::from(_temp_total.to_string());
-    _my_memory.total.push_str(" GB");
-    _my_memory.used = String::from(_temp_used.to_string());
-    _my_memory.used.push_str(" GB");
-    _my_memory.free = String::from(_temp_free.to_string());
-    _my_memory.free.push_str(" GB");
+    _my_memory.total = format!("{:.2} GB", _temp_total);
+    _my_memory.used = format!("{:.2} GB", _temp_used);
+    _my_memory.free = format!("{:.2} GB", _temp_free);
 
     // Return Memory Info
     _my_memory
@@ -91,7 +86,7 @@ pub fn get_memory_info(_passed_system: &mut System) -> Memory {
 pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     let _running_system = _passed_system;
     // Declare Constants
-    const _MHZ_TO_GHZ: f32 = 1000.0;
+    const _MHZ_TO_GHZ: f64 = 1000.0;
     // Declare Variables
     let mut _cpu_count = 0;
     let mut _my_processor = Processor {
@@ -114,24 +109,16 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
 
     // Get speed in Ghz
     // cast frequency into a float
-    let _temp_freq: f32 = _my_cpu.frequency() as f32;
-    let _my_speed: f32 = _temp_freq / _MHZ_TO_GHZ;
-    let _my_speed = (_my_speed * 100.0).round() / 100.0;
-
-    // Fix the usage to a certain length
-    let _temp_usage: f32 = _my_cpu.cpu_usage() as f32;
-    let _my_usage = (_temp_usage * 100.0).round() / 100.0;
+    let _temp_freq: f64 = _my_cpu.frequency() as f64 / _MHZ_TO_GHZ;
+    let _temp_usage: f64 = _my_cpu.cpu_usage() as f64;
 
     // Pack Struct
     _my_processor.name = String::from(_my_cpu.brand());
     _my_processor.vendor = String::from(_my_cpu.vendor_id());
     _my_processor.cores = String::from(_cpu_count.to_string());
-    //Overwrite the string to concatenate the units
-    _my_processor.speed = String::from(_my_speed.to_string());
-    _my_processor.speed.push_str(" GHz");
-    _my_processor.usage = String::from(_my_usage.to_string());
-    _my_processor.usage.push_str(" %");
     _my_processor.family = get_cpu_architecture();
+    _my_processor.speed = format!("{:.2} GHz", _temp_freq);
+    _my_processor.usage = format!("{:.2} %", _temp_usage);
 
     // Return Processor Info
     _my_processor

@@ -1,6 +1,6 @@
 [package]
 name = "machine_info"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 
 [dependencies]
@@ -14,8 +14,20 @@ slint-build = "1.12.1"
 [package.metadata.bundle]
 name = "Machine Info"
 identifier = "io.github.northshorehero.machineinfo"
-icon = ["ui/icons/MachineInfo128x128.png", "ui/icons/MachineInfo32x32"]
-version = "0.1.3"
+icon = [
+    "ui/icons/MachineInfo16x16.png",
+    "ui/icons/MachineInfo16x16@2x.png",
+    "ui/icons/MachineInfo32x32.png",
+    "ui/icons/MachineInfo32x32@2x.png",
+    "ui/icons/MachineInfo64x64.png",
+    "ui/icons/MachineInfo128x128.png",
+    "ui/icons/MachineInfo128x128@2x.png",
+    "ui/icons/MachineInfo256x256.png",
+    "ui/icons/MachineInfo256x256@.png",
+    "ui/icons/MachineInfo512x512.png",
+    "ui/icons/MachineInfo512x512@2x.png"
+]
+version = "0.1.4"
 resources = ["assets", "app.db"]
 copyright = "Copyright (c) Daniel Mattila 2025. All rights reserved."
 category = "Utility"

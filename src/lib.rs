@@ -84,6 +84,9 @@ pub fn get_memory_info(_passed_system: &mut System) -> Memory {
 }
 
 pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
+    // Create a vector to store the percentages of each core
+    let mut _core_percents: Vec<f32> = Vec::new();
+    // Create a reference to the passed system
     let _running_system = _passed_system;
     // Declare Constants
     const _MHZ_TO_GHZ: f64 = 1000.0;
@@ -102,15 +105,16 @@ pub fn get_cpu_info(_passed_system: &mut System) -> Processor {
     _running_system.refresh_cpu_all();
     let _my_cpu = _running_system.cpus().first().unwrap();
 
-    // Count the number of cores
+    // Count the number of cores and get the total % usage
     for _cpu in _running_system.cpus() {
         _cpu_count += 1;
+        _core_percents.push(_cpu.cpu_usage())
     }
+    let _temp_usage: f64 = _core_percents.iter().sum::<f32>() as f64 / _cpu_count as f64;
 
     // Get speed in Ghz
     // cast frequency into a float
     let _temp_freq: f64 = _my_cpu.frequency() as f64 / _MHZ_TO_GHZ;
-    let _temp_usage: f64 = _my_cpu.cpu_usage() as f64;
 
     // Pack Struct
     _my_processor.name = String::from(_my_cpu.brand());

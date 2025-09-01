@@ -1,4 +1,4 @@
-![MachineInfo Icon](./ui/icons/MachineInfo.png)
+![MachineInfo Icon](./ui/icons/MachineInfo256x256.png)
 # MachineInfo
 
 **MachineInfo** is a basic tool to display information about your running machine.

@@ -3,69 +3,12 @@
 use rusqlite::{Connection, Result as SqliteResult};
 use std::env;
 use std::error::Error;
-use std::path::PathBuf;
 use std::sync::Arc;
-use sysinfo::{Disks, System}; // Add this import
-
+use machine_info::{Memory, Storage, Processor, Dimension, set_db_path};
 slint::include_modules!();
-use machine_info::{get_cpu_info, get_if_dev, get_memory_info, get_storage_info};
-
-struct Dimension {
-    x_position: String,
-    y_position: String,
-}
-
-// Determines the appropriate database file path
-// In development: Displays relevant environment information
-// Returns: PathBuf containing the database location
-fn get_db_path() -> PathBuf {
-    let _if_dev = get_if_dev();
-
-    if _if_dev == Some(true) {
-        println!("Running in dev mode");
-        let mut _dev_path = PathBuf::new();
-        _dev_path.push(env::current_exe().unwrap());
-        _dev_path = _dev_path.parent().unwrap().join("app.db");
-        _dev_path
-    } else {
-        println!("Running in release mode");
-        // Get the path to the app bundle's Resources directory
-        let mut _release_path = PathBuf::new();
-        if let Ok(exe_path) = env::current_exe() {
-            // On macOS, the executable is typically at MyApp.app/Contents/MacOS/executable
-            // We want to store the database in MyApp.app/Contents/Resources/
-            if let Some(exe_dir) = exe_path.parent() {
-                if let Some(macos_dir) = exe_dir.parent() {
-                    if let Some(contents_dir) = macos_dir.parent() {
-                        _release_path = contents_dir.join("Resources").join("app.db");
-                    }
-                }
-            }
-        }
-
-        // Fallback to the home directory if we can't access the app bundle
-        if _release_path.parent().is_none() {
-            _release_path = env::home_dir()
-                .unwrap()
-                .join("Library")
-                .join("Application Support")
-                .join(env!("CARGO_PKG_NAME"))
-                .join("app.db");
-        }
-
-        // Ensure the parent directory exists
-        if let Some(parent) = _release_path.parent() {
-            std::fs::create_dir_all(parent).unwrap_or_else(|e| {
-                eprintln!("Failed to create database directory: {}", e);
-            });
-        }
-
-        _release_path
-    }
-}
 
 fn init_db() -> SqliteResult<Connection> {
-    let db_path = get_db_path();
+    let db_path = set_db_path();
     println!("Using database at: {}", db_path.display());
     let conn = Connection::open(db_path)?;
 
@@ -118,10 +61,7 @@ fn set_window_position(conn: &Connection, width: i32, height: i32) {
 }
 
 fn get_window_position(conn: &Connection) -> Dimension {
-    let mut my_dimension: Dimension = Dimension {
-        x_position: "".to_string(),
-        y_position: "".to_string(),
-    };
+    let mut my_dimension = Dimension::new();
     my_dimension.x_position = conn
         .query_row(
             "SELECT content FROM UserSettings WHERE item_name = 'WindowWidth'",
@@ -142,18 +82,20 @@ fn get_window_position(conn: &Connection) -> Dimension {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Initialize connection to computer
-    let mut _running_system = System::new_all();
-    _running_system.refresh_all();
-    let mut _running_disks = Disks::new_with_refreshed_list();
-
-    // Get system information
-    let _cpuid = get_cpu_info(&mut _running_system);
-    let _memory = get_memory_info(&mut _running_system);
-    let _storage = get_storage_info(&mut _running_disks);
-
     // Initialize the database connection and wrap it in Arc (allows multiple conn.executes)
     let conn = Arc::new(init_db()?);
+
+    // Get connection to disks
+    let mut _storage_connection = Storage::set_storage_connection();
+    let _storage = Storage::get_storage_info(&mut _storage_connection);
+
+    // Get CPU information
+    let mut _cpu_connection = Processor::set_cpu_connection();
+    let _cpu = Processor::get_cpu_info(&mut _cpu_connection);
+
+    // Get memory information
+    let mut _memory_connection = Memory::set_memory_connection();
+    let _memory = Memory::get_memory_info(&mut _memory_connection);
 
     // Initialize UI components
     let ui = AppWindow::new()?;
@@ -164,12 +106,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Pass CPU to UI
-    ui.set_cpu_id(_cpuid.name.into());
-    ui.set_cpu_vendor(_cpuid.vendor.into());
-    ui.set_cpu_speed(_cpuid.speed.into());
-    ui.set_cpu_cores(_cpuid.cores.into());
-    ui.set_cpu_usage(_cpuid.usage.into());
-    ui.set_cpu_family(_cpuid.family.into());
+    ui.set_cpu_id(_cpu.name.into());
+    ui.set_cpu_vendor(_cpu.vendor.into());
+    ui.set_cpu_speed(_cpu.speed.into());
+    ui.set_cpu_cores(_cpu.cores.into());
+    ui.set_cpu_usage(_cpu.usage.into());
+    ui.set_cpu_family(_cpu.family.into());
 
     // Pass Memory to UI
     ui.set_memory_total(_memory.total.into());
@@ -188,16 +130,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         move || {
             let ui = ui_handle.unwrap();
             // Get system information
-            let _cpuid = get_cpu_info(&mut _running_system);
-            let _memory = get_memory_info(&mut _running_system);
-            let _storage = get_storage_info(&mut _running_disks);
+            let _cpu = Processor::get_cpu_info(&mut _cpu_connection);
+            let _memory = Memory::get_memory_info(&mut _memory_connection);
+            let _storage = Storage::get_storage_info(&mut _storage_connection);
             // Pass CPU to UI
-            ui.set_cpu_id(_cpuid.name.into());
-            ui.set_cpu_vendor(_cpuid.vendor.into());
-            ui.set_cpu_speed(_cpuid.speed.into());
-            ui.set_cpu_cores(_cpuid.cores.into());
-            ui.set_cpu_usage(_cpuid.usage.into());
-            ui.set_cpu_family(_cpuid.family.into());
+            ui.set_cpu_id(_cpu.name.into());
+            ui.set_cpu_vendor(_cpu.vendor.into());
+            ui.set_cpu_speed(_cpu.speed.into());
+            ui.set_cpu_cores(_cpu.cores.into());
+            ui.set_cpu_usage(_cpu.usage.into());
+            ui.set_cpu_family(_cpu.family.into());
             // Pass Memory to UI
             ui.set_memory_total(_memory.total.into());
             ui.set_memory_used(_memory.used.into());
@@ -216,6 +158,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         move || {
             let ui = ui_handle.unwrap();
             let input_text = ui.get_input_text().to_string();
+            #[cfg(debug_assertions)]
             println!("Saving input: {}", input_text);
             set_saved_entry(&conn, &input_text);
         }

@@ -49,10 +49,6 @@ export component AppWindow inherits Window {
         Menu {
             title: "File";
             MenuItem {
-                title: "Refresh";
-                activated => { file-refresh(); }
-            }
-            MenuItem {
                 title: "Close";
                 activated => { file-close(); }
             }
@@ -96,6 +92,5 @@ export component AppWindow inherits Window {
                 save-input => { root.save-input() }
                 input-text <=> root.input-text;
             }
-
     }
 }

@@ -2596,7 +2596,7 @@ dependencies = [
 
 [[package]]
 name = "machine_info"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "rusqlite",
  "slint",

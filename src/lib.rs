@@ -221,7 +221,9 @@ impl Memory {
     pub fn get_memory_info(_passed_system: &mut System) -> Memory {
         let _running_system = _passed_system;
         // Define Constants
-        const _BYTES_TO_GB: f64 = 1024.0 * 1024.0 * 1024.0;
+        const BASE_VALUE: u32 = 1024;
+        const RAISED_VALUE: u32 = 3;
+        const _BYTES_TO_GB: f64 = BASE_VALUE.pow(RAISED_VALUE) as f64;
         // Declare Variables
         let mut _my_memory = Memory::new();
         // Refresh memory
@@ -253,35 +255,41 @@ pub struct Storage {
     pub percent_used: Option<String>, // e.g. "75.96 %"
 }
 impl Storage {
-    pub fn set_storage_connection() -> Disks {
-        let mut _running_disks = Disks::new_with_refreshed_list();
-        _running_disks
+    pub fn get_storage_connection() -> Disks {
+        let running_disks = Disks::new_with_refreshed_list();
+        running_disks
     }
-    pub fn get_storage_info(_passed_disks: &mut Disks) -> Self {
+    pub fn get_storage_info(passed_disks: &mut Disks) -> Self {
         // Declare Constants
-        const _BYTES_TO_GB: f64 = 1_000_000_000.0;
+        const BYTES_TO_GB: f64 = 1_000_000_000.0;
 
         // Declare Variables
-        let _running_disks = _passed_disks;
-        let mut _my_storage = Self::default();
+        let mut my_storage = Self::default();
 
         // Refresh disk info
-        _running_disks.refresh(true);
+        passed_disks.refresh(true);
 
-        // Start Unwrapping
-        if let Some(disk) = _running_disks.first(){
+        // Start Unwrapping if we find a disk
+        if let Some(disk) = passed_disks.first(){
+            let mut percent_used = 0.0;
             let unwrapped_disk_name = disk.name().to_str();
-            let unwrapped_disk_size = disk.total_space() as f64 / _BYTES_TO_GB;
-            let unwrapped_disk_space = disk.available_space() as f64 / _BYTES_TO_GB;
+            let unwrapped_disk_size = disk.total_space() as f64 / BYTES_TO_GB;
+            let unwrapped_disk_space = disk.available_space() as f64 / BYTES_TO_GB;
             let used_space = unwrapped_disk_size - unwrapped_disk_space;
+            if unwrapped_disk_size > 0.0 && used_space > 0.0 {
+                percent_used = (used_space / unwrapped_disk_size) * 100.0;
+            }
 
-            _my_storage.name = Some(String::from(unwrapped_disk_name.unwrap_or_default()));
-            _my_storage.total_space = format!("{:.2} GB", unwrapped_disk_size).into();
-            _my_storage.free_space = format!("{:.2} GB", unwrapped_disk_space).into();
-            _my_storage.used_space = format!("{:.2} GB", used_space).into();
+            my_storage.name = Some(String::from(unwrapped_disk_name.unwrap_or_default()));
+            my_storage.total_space = format!("{:.2} GB", unwrapped_disk_size).into();
+            my_storage.free_space = format!("{:.2} GB", unwrapped_disk_space).into();
+            my_storage.used_space = format!("{:.2} GB", used_space).into();
+            my_storage.percent_used = format!("{:.2} %", percent_used).into()
+        } else {
+            eprintln!("Error: Data not found, returning default values");
         }
-        // Return a packed struct
-        _my_storage
+        // Return a packed struct (or default)
+        my_storage
     }
 }
 #[allow(unreachable_code)]
@@ -327,7 +335,7 @@ pub fn get_cpu_architecture() -> String {
         return "mips64".to_string();
     }
     //TODO add more architectures
-    return "Unknown Architecture".to_string();
+    "Unknown Architecture".to_string()
 }
 
 // Determines the execution environment based on debug assertions

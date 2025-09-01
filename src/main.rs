@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let conn = Arc::new(database::init_db()?);
 
     // Get connection to disks
-    let mut _storage_connection = Storage::set_storage_connection();
+    let mut _storage_connection = Storage::get_storage_connection();
     let _storage = Storage::get_storage_info(&mut _storage_connection);
 
     // Get CPU information
@@ -48,6 +48,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_storage_total(_storage.total_space.unwrap_or_default().into());
     ui.set_storage_used(_storage.used_space.unwrap_or_default().into());
     ui.set_storage_free(_storage.free_space.unwrap_or_default().into());
+    ui.set_storage_percent_used(_storage.percent_used.unwrap_or_default().into());
 
     // Refresh
     ui.on_file_refresh({

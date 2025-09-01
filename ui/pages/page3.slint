@@ -9,6 +9,7 @@ export component Page3 inherits Window {
     in property <string> storage-total: "Unknown Amount";
     in property <string> storage-used: "Unknown Amount";
     in property <string> storage-free: "Unknown Amount";
+    in property <string> storage-percent-used: "Unknown Amount";
 
     VerticalBox {
         alignment: LayoutAlignment.start;
@@ -65,6 +66,18 @@ export component Page3 inherits Window {
                 }
                 Text {
                     text <=> root.storage-free;
+                    horizontal-alignment: right;
+                }
+            }
+            HorizontalBox {
+                alignment: start;
+                Text {
+                    width: 80px;
+                    text: "Percent Used: ";
+                    horizontal-alignment: left;
+                }
+                Text {
+                    text <=> root.storage-percent-used;
                     horizontal-alignment: right;
                 }
             }

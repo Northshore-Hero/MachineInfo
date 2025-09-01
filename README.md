@@ -1,5 +1,8 @@
-![MachineInfo Icon](./ui/icons/MachineInfo.png)
-# MachineInfo
+<h1 align="center">
+  <a name="logo" href="/ui/icons/MachineInfo.png"><img src="ui/icons/MachineInfo.png" alt="MachineInfo" width="200"></a>
+  <br>
+  MachineInfo
+</h1>
 
 **MachineInfo** is a basic tool to display information about your running machine.
 It is built with Rust and uses the [Slint UI](https://github.com/slint-ui/slint) framework 

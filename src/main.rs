@@ -126,8 +126,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             .unwrap()
             .window()
             .set_position(slint::PhysicalPosition::new(
-                dimensions.x_position.parse().unwrap(),
-                dimensions.y_position.parse().unwrap(),
+                dimensions.x_position.unwrap_or_default().parse().expect("Failed to set X position"),
+                dimensions.y_position.unwrap_or_default().parse().expect("Failed to set Y position"),
             ));
     })
     .unwrap();

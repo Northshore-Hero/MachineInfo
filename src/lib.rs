@@ -83,7 +83,7 @@ pub mod database {
     }
 
     pub fn get_window_position(conn: &Connection) -> Dimension {
-        let mut my_dimension = Dimension::new();
+        let mut my_dimension = Dimension::default();
         my_dimension.x_position = conn
             .query_row(
                 "SELECT content FROM UserSettings WHERE item_name = 'WindowWidth'",
@@ -125,17 +125,10 @@ pub mod database {
             .expect("Unable to Save Window Position");
     }
 }
+#[derive(Debug, Default)]
 pub struct Dimension {
-    pub x_position: String,
-    pub y_position: String,
-}
-impl Dimension {
-    pub fn new() -> Self {
-        Dimension {
-            x_position: "".to_string(),
-            y_position: "".to_string(),
-        }
-    }
+    pub x_position: Option<String>,
+    pub y_position: Option<String>,
 }
 pub struct Processor {
     pub name: String,

@@ -31,6 +31,8 @@ pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
     // Declare Variables
     const _BYTES_TO_GB: f64 = 1000000000.0;
     let _running_disks = _passed_disks;
+    // Refresh disk info
+    _running_disks.refresh(true);
     let mut _my_storage = Storage {
         name: "".to_string(),
         usage: "".to_string(),

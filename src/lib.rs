@@ -240,55 +240,46 @@ impl Memory {
         _my_memory
     }
 }
+#[derive(Debug, Default)]
 pub struct Storage {
-    pub name: String,
-    pub usage: String,
-    pub mount_point: String,
-    pub file_system: String,
-    pub type_: String,
-    pub total_space: String,
-    pub free_space: String,
-    pub used_space: String,
-    pub percent_used: String,
+    pub name: Option<String>,
+    pub usage: Option<String>,
+    pub mount_point: Option<String>,
+    pub file_system: Option<String>,
+    pub type_: Option<String>,
+    pub total_space: Option<String>, // e.g. "500.00 GB"
+    pub free_space: Option<String>,  // e.g. "120.20 GB"
+    pub used_space: Option<String>,  // e.g. "379.80 GB"
+    pub percent_used: Option<String>, // e.g. "75.96 %"
 }
 impl Storage {
-    fn new() -> Self {
-        Storage {
-            name: "".to_string(),
-            usage: "".to_string(),
-            mount_point: "".to_string(),
-            file_system: "".to_string(),
-            type_: "".to_string(),
-            total_space: "".to_string(),
-            free_space: "".to_string(),
-            used_space: "".to_string(),
-            percent_used: "".to_string(),
-        }
-    }
     pub fn set_storage_connection() -> Disks {
         let mut _running_disks = Disks::new_with_refreshed_list();
         _running_disks
     }
     pub fn get_storage_info(_passed_disks: &mut Disks) -> Self {
+        // Declare Constants
+        const _BYTES_TO_GB: f64 = 1_000_000_000.0;
+
         // Declare Variables
-        const _BYTES_TO_GB: f64 = 1000000000.0;
         let _running_disks = _passed_disks;
+        let mut _my_storage = Self::default();
+
         // Refresh disk info
         _running_disks.refresh(true);
-        // Create a new storage struct
-        let mut _my_storage = Self::new();
-        // Define disk Info
-        let unwrapped_disk_name = _running_disks.first().unwrap().name();
-        let disk_name = unwrapped_disk_name.to_str();
-        let unwrapped_disk_size = _running_disks.first().unwrap().total_space() as f64 / _BYTES_TO_GB;
-        let unwrapped_disk_space =
-            _running_disks.first().unwrap().available_space() as f64 / _BYTES_TO_GB;
-        let used_space = unwrapped_disk_size - unwrapped_disk_space;
-        // Pack the Struct
-        _my_storage.name = String::from(disk_name.unwrap());
-        _my_storage.total_space = format!("{:.2} GB", unwrapped_disk_size);
-        _my_storage.free_space = format!("{:.2} GB", unwrapped_disk_space);
-        _my_storage.used_space = format!("{:.2} GB", used_space);
+
+        // Start Unwrapping
+        if let Some(disk) = _running_disks.first(){
+            let unwrapped_disk_name = disk.name().to_str();
+            let unwrapped_disk_size = disk.total_space() as f64 / _BYTES_TO_GB;
+            let unwrapped_disk_space = disk.available_space() as f64 / _BYTES_TO_GB;
+            let used_space = unwrapped_disk_size - unwrapped_disk_space;
+
+            _my_storage.name = Some(String::from(unwrapped_disk_name.unwrap_or_default()));
+            _my_storage.total_space = format!("{:.2} GB", unwrapped_disk_size).into();
+            _my_storage.free_space = format!("{:.2} GB", unwrapped_disk_space).into();
+            _my_storage.used_space = format!("{:.2} GB", used_space).into();
+        }
         // Return a packed struct
         _my_storage
     }

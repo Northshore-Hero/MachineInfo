@@ -44,10 +44,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_memory_free(_memory.free.into());
 
     // Pass Storage to UI
-    ui.set_storage_name(_storage.name.into());
-    ui.set_storage_total(_storage.total_space.into());
-    ui.set_storage_used(_storage.used_space.into());
-    ui.set_storage_free(_storage.free_space.into());
+    ui.set_storage_name(_storage.name.unwrap_or_default().into());
+    ui.set_storage_total(_storage.total_space.unwrap_or_default().into());
+    ui.set_storage_used(_storage.used_space.unwrap_or_default().into());
+    ui.set_storage_free(_storage.free_space.unwrap_or_default().into());
 
     // Refresh
     ui.on_file_refresh({
@@ -70,10 +70,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             ui.set_memory_used(_memory.used.into());
             ui.set_memory_free(_memory.free.into());
             // Pass Storage to the UI.
-            ui.set_storage_name(_storage.name.into());
-            ui.set_storage_total(_storage.total_space.into());
-            ui.set_storage_used(_storage.used_space.into());
-            ui.set_storage_free(_storage.free_space.into());
+            ui.set_storage_name(_storage.name.unwrap_or_default().into());
+            ui.set_storage_total(_storage.total_space.unwrap_or_default().into());
+            ui.set_storage_used(_storage.used_space.unwrap_or_default().into());
+            ui.set_storage_free(_storage.free_space.unwrap_or_default().into());
         }
     });
 

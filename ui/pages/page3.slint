@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton, StandardTableView } from "std-widgets.slint";
+import { row_entry } from "../ui_lib/row_entry.slint";
 import { Page1 } from "page1.slint";
 
 export component Page3 inherits Window {
@@ -21,65 +22,25 @@ export component Page3 inherits Window {
             }
         }
         VerticalLayout {
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Drive Name: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.storage-name;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Drive Name: ";
+                value <=> root.storage-name;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Total Storage: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.storage-total;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Total Storage: ";
+                value <=> root.storage-total;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Used Storage: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.storage-used;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Used Storage: ";
+                value <=> root.storage-used;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Free Storage: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.storage-free;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Free Storage: ";
+                value <=> root.storage-free;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Percent Used: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.storage-percent-used;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Percent Used: ";
+                value <=> root.storage-percent-used;
             }
         }
     }

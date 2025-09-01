@@ -1,5 +1,3 @@
-use std::env;
-use std::path::PathBuf;
 use sysinfo::{Disks, System};
 
 pub mod database {

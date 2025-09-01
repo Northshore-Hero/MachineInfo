@@ -4,15 +4,15 @@ use rusqlite::{Connection, Result as SqliteResult};
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
-use sysinfo::{System, Disks};
-use std::sync::Arc;  // Add this import
+use std::sync::Arc;
+use sysinfo::{Disks, System}; // Add this import
 
 slint::include_modules!();
 use machine_info::{get_cpu_info, get_if_dev, get_memory_info, get_storage_info};
 
 struct Dimension {
     x_position: String,
-    y_position: String
+    y_position: String,
 }
 
 // Determines the appropriate database file path
@@ -27,8 +27,7 @@ fn get_db_path() -> PathBuf {
         _dev_path.push(env::current_exe().unwrap());
         _dev_path = _dev_path.parent().unwrap().join("app.db");
         _dev_path
-    }
-    else {
+    } else {
         println!("Running in release mode");
         // Get the path to the app bundle's Resources directory
         let mut _release_path = PathBuf::new();
@@ -43,7 +42,7 @@ fn get_db_path() -> PathBuf {
                 }
             }
         }
-        
+
         // Fallback to the home directory if we can't access the app bundle
         if _release_path.parent().is_none() {
             _release_path = env::home_dir()
@@ -53,14 +52,14 @@ fn get_db_path() -> PathBuf {
                 .join(env!("CARGO_PKG_NAME"))
                 .join("app.db");
         }
-        
+
         // Ensure the parent directory exists
         if let Some(parent) = _release_path.parent() {
             std::fs::create_dir_all(parent).unwrap_or_else(|e| {
                 eprintln!("Failed to create database directory: {}", e);
             });
         }
-        
+
         _release_path
     }
 }
@@ -103,10 +102,8 @@ fn get_saved_entry(conn: &Connection) -> SqliteResult<String> {
 }
 
 fn set_saved_entry(conn: &Connection, entry: &str) {
-    conn.execute(
-        "UPDATE UserSettings SET content = ?1 WHERE id = 1",
-        [entry],
-    ).expect("Unable to Save Entry");
+    conn.execute("UPDATE UserSettings SET content = ?1 WHERE id = 1", [entry])
+        .expect("Unable to Save Entry");
 }
 
 fn set_window_position(conn: &Connection, width: i32, height: i32) {
@@ -116,42 +113,44 @@ fn set_window_position(conn: &Connection, width: i32, height: i32) {
             (2, 'WindowWidth', ?1),
             (3, 'WindowHeight', ?2)",
         [width, height],
-    ).expect("Unable to Save Window Position");
+    )
+    .expect("Unable to Save Window Position");
 }
 
 fn get_window_position(conn: &Connection) -> Dimension {
-    let mut my_dimension: Dimension = Dimension { x_position: "".to_string(), y_position: "".to_string() };
-    my_dimension.x_position = conn.query_row(
-        "SELECT content FROM UserSettings WHERE item_name = 'WindowWidth'",
-        [],
-        |row| row.get(0)
-    ).expect("Read Failure");
+    let mut my_dimension: Dimension = Dimension {
+        x_position: "".to_string(),
+        y_position: "".to_string(),
+    };
+    my_dimension.x_position = conn
+        .query_row(
+            "SELECT content FROM UserSettings WHERE item_name = 'WindowWidth'",
+            [],
+            |row| row.get(0),
+        )
+        .expect("Read Failure");
 
-    my_dimension.y_position = conn.query_row(
-        "SELECT content FROM UserSettings WHERE item_name = 'WindowHeight'",
-        [],
-        |row| row.get(0)
-    ).expect("Read Failure");
+    my_dimension.y_position = conn
+        .query_row(
+            "SELECT content FROM UserSettings WHERE item_name = 'WindowHeight'",
+            [],
+            |row| row.get(0),
+        )
+        .expect("Read Failure");
     // Return the dimensions
     my_dimension
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    //println!("=> disks:");
-    let mut disks = Disks::new_with_refreshed_list();
-    //for disk in &disks {
-    //    println!("{disk:?}");
-    //}
-    // Initialize connection to disks
-
     // Initialize connection to computer
     let mut _running_system = System::new_all();
     _running_system.refresh_all();
+    let mut _running_disks = Disks::new_with_refreshed_list();
 
     // Get system information
     let _cpuid = get_cpu_info(&mut _running_system);
     let _memory = get_memory_info(&mut _running_system);
-    let _storage = get_storage_info(&mut disks);
+    let _storage = get_storage_info(&mut _running_disks);
 
     // Initialize the database connection and wrap it in Arc (allows multiple conn.executes)
     let conn = Arc::new(init_db()?);
@@ -191,6 +190,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             // Get system information
             let _cpuid = get_cpu_info(&mut _running_system);
             let _memory = get_memory_info(&mut _running_system);
+            let _storage = get_storage_info(&mut _running_disks);
             // Pass CPU to UI
             ui.set_cpu_id(_cpuid.name.into());
             ui.set_cpu_vendor(_cpuid.vendor.into());
@@ -202,6 +202,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             ui.set_memory_total(_memory.total.into());
             ui.set_memory_used(_memory.used.into());
             ui.set_memory_free(_memory.free.into());
+            // Pass Storage to the UI.
+            ui.set_storage_name(_storage.name.into());
+            ui.set_storage_total(_storage.total_space.into());
+            ui.set_storage_used(_storage.used_space.into());
+            ui.set_storage_free(_storage.free_space.into());
         }
     });
 
@@ -219,20 +224,26 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Configure application termination handler
     ui.on_file_close({
         let ui_handle = ui.as_weak();
-        let conn = Arc::clone(&conn);
         move || {
-            println!("{:?}", ui_handle.unwrap().window().position());
-            set_window_position(&conn, ui_handle.unwrap().window().position().x, ui_handle.unwrap().window().position().y);
-            std::process::exit(0);
+            ui_handle
+                .unwrap()
+                .window()
+                .try_dispatch_event(slint::platform::WindowEvent::CloseRequested)
+                .expect("Unable to close window");
         }
     });
-    
+    // Close file handling
     ui.window().on_close_requested({
         let ui_handle = ui.as_weak();
         let conn = Arc::clone(&conn);
         move || {
+            #[cfg(debug_assertions)]
             println!("{:?}", ui_handle.unwrap().window().position());
-            set_window_position(&conn, ui_handle.unwrap().window().position().x, ui_handle.unwrap().window().position().y);
+            set_window_position(
+                &conn,
+                ui_handle.unwrap().window().position().x,
+                ui_handle.unwrap().window().position().y,
+            );
             std::process::exit(0);
         }
     });
@@ -242,8 +253,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     let dimensions = get_window_position(&conn);
     slint::invoke_from_event_loop(move || {
         // Set the window position to specific x, y coordinates
-        weak_app.unwrap().window().set_position(slint::PhysicalPosition::new(dimensions.x_position.parse().unwrap(), dimensions.y_position.parse().unwrap()));
-    }).unwrap();
+        weak_app
+            .unwrap()
+            .window()
+            .set_position(slint::PhysicalPosition::new(
+                dimensions.x_position.parse().unwrap(),
+                dimensions.y_position.parse().unwrap(),
+            ));
+    })
+    .unwrap();
 
     // Launch application event loop
     ui.run()?;

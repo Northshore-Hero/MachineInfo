@@ -1,4 +1,4 @@
-use sysinfo::{System, Disks};
+use sysinfo::{Disks, System};
 
 pub struct Storage {
     pub name: String,
@@ -46,7 +46,8 @@ pub fn get_storage_info(_passed_disks: &mut Disks) -> Storage {
     let unwrapped_disk_name = _running_disks.first().unwrap().name();
     let disk_name = unwrapped_disk_name.to_str();
     let unwrapped_disk_size = _running_disks.first().unwrap().total_space() as f64 / _BYTES_TO_GB;
-    let unwrapped_disk_space = _running_disks.first().unwrap().available_space() as f64 / _BYTES_TO_GB;
+    let unwrapped_disk_space =
+        _running_disks.first().unwrap().available_space() as f64 / _BYTES_TO_GB;
     let used_space = unwrapped_disk_size - unwrapped_disk_space;
     // Pack the Struct
     _my_storage.name = String::from(disk_name.unwrap());

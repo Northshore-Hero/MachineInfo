@@ -1,6 +1,6 @@
 [package]
 name = "machine_info"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2024"
 
 [dependencies]
@@ -27,7 +27,7 @@ icon = [
     "ui/icons/MachineInfo512x512.png",
     "ui/icons/MachineInfo512x512@2x.png"
 ]
-version = "0.1.6"
+version = "0.1.7"
 resources = ["assets", "LICENSE"]
 copyright = "Copyright (c) Daniel Mattila 2025. All rights reserved."
 category = "Utility"

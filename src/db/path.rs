@@ -1,9 +1,10 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
 use directories::ProjectDirs;
 
-pub fn set_db_path() -> PathBuf {
+pub fn set_db_path() -> Result<PathBuf, Box<dyn Error>> {
     let mut path = PathBuf::new();
 
     let if_dev = get_if_dev();
@@ -22,7 +23,7 @@ pub fn set_db_path() -> PathBuf {
     }
 
     // Return the pathway
-    path
+    Ok(path)
 }
 
 // Determines the execution environment based on debug assertions

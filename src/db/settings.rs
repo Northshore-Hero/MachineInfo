@@ -3,8 +3,13 @@ use crate::types::Dimension;
 use rusqlite::{Connection, Result as SqliteResult};
 
 pub fn init_db() -> SqliteResult<Connection> {
-    let db_path = set_db_path();
-    println!("Using database at: {}", db_path.display());
+    // Open the database
+    let db_path = set_db_path().map_err(|e| rusqlite::Error::InvalidParameterName(e.to_string()))?;
+    if let Some(is_dev) = crate::db::path::get_if_dev() {
+        if is_dev {
+            println!("Using development database at {}", db_path.display());
+        }
+    }
     let conn = Connection::open(&db_path)?;
 
     // Create the table only if it doesn't exist

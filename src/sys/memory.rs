@@ -2,13 +2,6 @@ use crate::types::Memory;
 use sysinfo::System;
 
 impl Memory {
-    fn new() -> Self {
-        Memory {
-            total: "".to_string(),
-            used: "".to_string(),
-            free: "".to_string(),
-        }
-    }
     pub fn set_memory_connection() -> System {
         let mut _running_system = System::new_all();
         _running_system.refresh_memory();
@@ -21,7 +14,7 @@ impl Memory {
         const RAISED_VALUE: u32 = 3;
         const _BYTES_TO_GB: f64 = BASE_VALUE.pow(RAISED_VALUE) as f64;
         // Declare Variables
-        let mut _my_memory = Memory::new();
+        let mut _my_memory = Memory::default();
         // Refresh memory
         _running_system.refresh_memory();
 
@@ -30,9 +23,9 @@ impl Memory {
         let _temp_used = _temp_total - _temp_free;
 
         // Pack the struct
-        _my_memory.total = format!("{:.2} GB", _temp_total);
-        _my_memory.used = format!("{:.2} GB", _temp_used);
-        _my_memory.free = format!("{:.2} GB", _temp_free);
+        _my_memory.total = format!("{:.2} GB", _temp_total).into();
+        _my_memory.used = format!("{:.2} GB", _temp_used).into();
+        _my_memory.free = format!("{:.2} GB", _temp_free).into();
 
         // Return Memory Info
         _my_memory

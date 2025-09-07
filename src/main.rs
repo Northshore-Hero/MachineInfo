@@ -39,9 +39,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     ui.set_cpu_family(_cpu.family.into());
 
     // Pass Memory to UI
-    ui.set_memory_total(_memory.total.into());
-    ui.set_memory_used(_memory.used.into());
-    ui.set_memory_free(_memory.free.into());
+    ui.set_memory_total(_memory.total.unwrap_or_default().into());
+    ui.set_memory_used(_memory.used.unwrap_or_default().into());
+    ui.set_memory_free(_memory.free.unwrap_or_default().into());
 
     // Pass Storage to UI
     ui.set_storage_name(_storage.name.unwrap_or_default().into());
@@ -67,9 +67,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             ui.set_cpu_usage(_cpu.usage.into());
             ui.set_cpu_family(_cpu.family.into());
             // Pass Memory to UI
-            ui.set_memory_total(_memory.total.into());
-            ui.set_memory_used(_memory.used.into());
-            ui.set_memory_free(_memory.free.into());
+            ui.set_memory_total(_memory.total.unwrap_or_default().into());
+            ui.set_memory_used(_memory.used.unwrap_or_default().into());
+            ui.set_memory_free(_memory.free.unwrap_or_default().into());
             // Pass Storage to the UI.
             ui.set_storage_name(_storage.name.unwrap_or_default().into());
             ui.set_storage_total(_storage.total_space.unwrap_or_default().into());

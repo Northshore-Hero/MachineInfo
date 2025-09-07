@@ -5,7 +5,7 @@ pub struct Dimension {
     pub y_position: Option<String>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Storage {
     pub name: Option<String>,
     pub usage: Option<String>,
@@ -26,9 +26,9 @@ pub struct Processor {
     pub cores: String,
     pub usage: String,
 }
-
+#[derive(Debug, Default, Clone)]
 pub struct Memory {
-    pub total: String,
-    pub used: String,
-    pub free: String,
+    pub total: Option<String>,
+    pub used: Option<String>,
+    pub free: Option<String>,
 }

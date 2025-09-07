@@ -1,52 +1,28 @@
 use std::env;
+use std::fs;
 use std::path::PathBuf;
+use directories::ProjectDirs;
 
-// Sets the path to the database based on the execution environment
-// Returns the path to the database
-// TODO Refactor this to use the directories crate
 pub fn set_db_path() -> PathBuf {
-    let _if_dev = get_if_dev();
+    let mut path = PathBuf::new();
 
-    if _if_dev == Some(true) {
-        println!("Running in dev mode");
-        let mut _dev_path = PathBuf::new();
-        _dev_path.push(env::current_exe().unwrap());
-        _dev_path = _dev_path.parent().unwrap().join("app.db");
-        _dev_path
-    } else {
-        println!("Running in release mode");
-        // Get the path to the app bundle's Resources directory
-        let mut _release_path = PathBuf::new();
+    let if_dev = get_if_dev();
+    if if_dev == Some(true) {
         if let Ok(exe_path) = env::current_exe() {
-            // On macOS, the executable is typically at MyApp.app/Contents/MacOS/executable
-            // We want to store the database in MyApp.app/Contents/Resources/
-            if let Some(exe_dir) = exe_path.parent() {
-                if let Some(macos_dir) = exe_dir.parent() {
-                    if let Some(contents_dir) = macos_dir.parent() {
-                        _release_path = contents_dir.join("Resources").join("app.db");
-                    }
-                }
-            }
+            fs::create_dir_all(exe_path.parent().unwrap().join("Resources")).expect("Unable to create directory -> Aborting!");
+            let dev_path = exe_path.parent().unwrap().join("Resources/app.db");
+            path = dev_path;
         }
-
-        // Fallback to the home directory if we can't access the app bundle
-        if _release_path.parent().is_none() {
-            _release_path = env::home_dir()
-                .unwrap()
-                .join("Library")
-                .join("Application Support")
-                .join(env!("CARGO_PKG_NAME"))
-                .join("app.db");
+    } else {
+        if let Some(project_dirs) = ProjectDirs::from("io", "github.northshorehero", "MachineInfo") {
+            fs::create_dir_all(project_dirs.config_dir()).expect("Unable to create directory -> Aborting!");
+            let prod_path = project_dirs.config_dir().join("app.db");
+            path = prod_path
         }
-
-        // Ensure the parent directory exists
-        if let Some(parent) = _release_path.parent() {
-            std::fs::create_dir_all(parent).unwrap_or_else(|e| {
-                eprintln!("Failed to create database directory: {}", e);
-            });
-        }
-        _release_path
     }
+
+    // Return the pathway
+    path
 }
 
 // Determines the execution environment based on debug assertions

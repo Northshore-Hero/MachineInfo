@@ -5,7 +5,7 @@ use rusqlite::{Connection, Result as SqliteResult};
 pub fn init_db() -> SqliteResult<Connection> {
     let db_path = set_db_path();
     println!("Using database at: {}", db_path.display());
-    let conn = Connection::open(db_path)?;
+    let conn = Connection::open(&db_path)?;
 
     // Create the table only if it doesn't exist
     conn.execute(
@@ -72,14 +72,4 @@ pub fn set_window_position(conn: &Connection, width: i32, height: i32) {
         [width, height],
     )
     .expect("Unable to Save Window Position");
-}
-
-// Determines the execution environment based on debug assertions
-// Returns Some(true) for development mode, Some(false) for release mode
-pub fn get_if_dev() -> Option<bool> {
-    if cfg!(debug_assertions) {
-        Some(true)
-    } else {
-        Some(false)
-    }
 }

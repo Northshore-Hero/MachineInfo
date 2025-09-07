@@ -31,12 +31,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Pass CPU to UI
-    ui.set_cpu_id(_cpu.name.into());
-    ui.set_cpu_vendor(_cpu.vendor.into());
-    ui.set_cpu_speed(_cpu.speed.into());
-    ui.set_cpu_cores(_cpu.cores.into());
-    ui.set_cpu_usage(_cpu.usage.into());
-    ui.set_cpu_family(_cpu.family.into());
+    ui.set_cpu_id(_cpu.name.unwrap_or_default().into());
+    ui.set_cpu_vendor(_cpu.vendor.unwrap_or_default().into());
+    ui.set_cpu_speed(_cpu.speed.unwrap_or_default().into());
+    ui.set_cpu_cores(_cpu.cores.unwrap_or_default().into());
+    ui.set_cpu_usage(_cpu.usage.unwrap_or_default().into());
+    ui.set_cpu_family(_cpu.family.unwrap_or_default().into());
 
     // Pass Memory to UI
     ui.set_memory_total(_memory.total.unwrap_or_default().into());
@@ -60,12 +60,12 @@ fn main() -> Result<(), Box<dyn Error>> {
             let _memory = Memory::get_memory_info(&mut _memory_connection);
             let _storage = Storage::get_storage_info(&mut _storage_connection);
             // Pass CPU to UI
-            ui.set_cpu_id(_cpu.name.into());
-            ui.set_cpu_vendor(_cpu.vendor.into());
-            ui.set_cpu_speed(_cpu.speed.into());
-            ui.set_cpu_cores(_cpu.cores.into());
-            ui.set_cpu_usage(_cpu.usage.into());
-            ui.set_cpu_family(_cpu.family.into());
+            ui.set_cpu_id(_cpu.name.unwrap_or_default().into());
+            ui.set_cpu_vendor(_cpu.vendor.unwrap_or_default().into());
+            ui.set_cpu_speed(_cpu.speed.unwrap_or_default().into());
+            ui.set_cpu_cores(_cpu.cores.unwrap_or_default().into());
+            ui.set_cpu_usage(_cpu.usage.unwrap_or_default().into());
+            ui.set_cpu_family(_cpu.family.unwrap_or_default().into());
             // Pass Memory to UI
             ui.set_memory_total(_memory.total.unwrap_or_default().into());
             ui.set_memory_used(_memory.used.unwrap_or_default().into());

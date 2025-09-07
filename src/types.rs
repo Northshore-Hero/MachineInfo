@@ -18,14 +18,16 @@ pub struct Storage {
     pub percent_used: Option<String>, // e.g. "75.96 %"
 }
 
+#[derive(Debug, Default, Clone)]
 pub struct Processor {
-    pub name: String,
-    pub vendor: String,
-    pub family: String,
-    pub speed: String,
-    pub cores: String,
-    pub usage: String,
+    pub name: Option<String>,
+    pub vendor: Option<String>,
+    pub family: Option<String>,
+    pub speed: Option<String>,
+    pub cores: Option<String>,
+    pub usage: Option<String>,
 }
+
 #[derive(Debug, Default, Clone)]
 pub struct Memory {
     pub total: Option<String>,

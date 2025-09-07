@@ -1,9 +1,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use machine_info::{db, types::Memory, types::Processor, types::Storage};
 use std::env;
 use std::error::Error;
 use std::sync::Arc;
-use machine_info::{Memory, Storage, Processor, db};
 slint::include_modules!();
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -126,8 +126,16 @@ fn main() -> Result<(), Box<dyn Error>> {
             .unwrap()
             .window()
             .set_position(slint::PhysicalPosition::new(
-                dimensions.x_position.unwrap_or_default().parse().expect("Failed to set X position"),
-                dimensions.y_position.unwrap_or_default().parse().expect("Failed to set Y position"),
+                dimensions
+                    .x_position
+                    .unwrap_or_default()
+                    .parse()
+                    .expect("Failed to set X position"),
+                dimensions
+                    .y_position
+                    .unwrap_or_default()
+                    .parse()
+                    .expect("Failed to set Y position"),
             ));
     })
     .unwrap();

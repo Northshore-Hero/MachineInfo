@@ -1,6 +1,6 @@
-use rusqlite::{Connection, Result as SqliteResult};
 use crate::db::path::set_db_path;
 use crate::types::Dimension;
+use rusqlite::{Connection, Result as SqliteResult};
 
 pub fn init_db() -> SqliteResult<Connection> {
     let db_path = set_db_path();
@@ -71,7 +71,7 @@ pub fn set_window_position(conn: &Connection, width: i32, height: i32) {
             (3, 'WindowHeight', ?2)",
         [width, height],
     )
-        .expect("Unable to Save Window Position");
+    .expect("Unable to Save Window Position");
 }
 
 // Determines the execution environment based on debug assertions

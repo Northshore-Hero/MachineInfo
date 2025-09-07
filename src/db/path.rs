@@ -1,6 +1,9 @@
 use std::env;
 use std::path::PathBuf;
 
+// Sets the path to the database based on the execution environment
+// Returns the path to the database
+// TODO Refactor this to use the directories crate
 pub fn set_db_path() -> PathBuf {
     let _if_dev = get_if_dev();
 

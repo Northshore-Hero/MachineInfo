@@ -1,0 +1,18 @@
+import { VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+export component row_entry inherits Window {
+    in property <string> label: "Unknown label";
+    in property <string> value: "Unknown value";
+    HorizontalBox {
+        alignment: start;
+        Text {
+            width: 80px;
+            text: root.label;
+            horizontal-alignment: left;
+        }
+        Text {
+            text <=> root.value;
+            horizontal-alignment: right;
+        }
+    }
+}

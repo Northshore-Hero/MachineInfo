@@ -1,7 +1,5 @@
-// Copyright © SixtyFPS GmbH <info@slint.dev>
-// SPDX-License-Identifier: MIT
-
 import { VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { row_entry } from "../ui_lib/row_entry.slint";
 
 export component Page1 inherits Window {
     in property <string> cpu-id: "Unknown CPU";
@@ -21,78 +19,29 @@ export component Page1 inherits Window {
             }
         }
         VerticalLayout {
-            spacing: 0px;
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "CPU ID: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-id;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "CPU-ID: ";
+                value <=> root.cpu-id;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "CPU Vendor: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-vendor;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "CPU Vendor: ";
+                value <=> root.cpu-vendor;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Speed: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-speed;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Speed: ";
+                value <=> root.cpu-speed;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Cores: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-cores;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Cores: ";
+                value <=> root.cpu-cores;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Usage: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-usage;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Usage: ";
+                value <=> root.cpu-usage;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Family: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.cpu-family;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Family: ";
+                value <=> root.cpu-family;
             }
         }
     }

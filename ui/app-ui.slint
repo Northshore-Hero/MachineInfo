@@ -24,6 +24,7 @@ export component AppWindow inherits Window {
     in property <string> storage-total;
     in property <string> storage-used;
     in property <string> storage-free;
+    in property <string> storage-percent-used;
     // Page 4 Callbacks
     in-out property <string> input-text;
     // Set Initial Display Parameters
@@ -87,6 +88,7 @@ export component AppWindow inherits Window {
                 storage-total <=> root.storage-total;
                 storage-used <=> root.storage-used;
                 storage-free <=> root.storage-free;
+                storage-percent-used <=> root.storage-percent-used;
             }
             if(side-bar.current-item == 3) : Page4 {
                 save-input => { root.save-input() }

@@ -1,7 +1,5 @@
-// Copyright © SixtyFPS GmbH <info@slint.dev>
-// SPDX-License-Identifier: MIT
-
-import { LineEdit, AboutSlint, VerticalBox, Button, GridBox, GroupBox, HorizontalBox, StandardButton } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { row_entry } from "../ui_lib/row_entry.slint";
 
 export component Page2 inherits Window {
     in property <string> memory-total: "Unknown Amount";
@@ -18,41 +16,17 @@ export component Page2 inherits Window {
             }
         }
         VerticalLayout {
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Total Memory: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.memory-total;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Total Memory: ";
+                value <=> root.memory-total;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Used Memory: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.memory-used;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Used Memory: ";
+                value <=> root.memory-used;
             }
-            HorizontalBox {
-                alignment: start;
-                Text {
-                    width: 80px;
-                    text: "Free Memory: ";
-                    horizontal-alignment: left;
-                }
-                Text {
-                    text <=> root.memory-free;
-                    horizontal-alignment: right;
-                }
+            row-entry {
+                label: "Free Memory: ";
+                value <=> root.memory-free;
             }
         }
     }

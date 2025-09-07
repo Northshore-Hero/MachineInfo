@@ -1,15 +1,16 @@
 [package]
 name = "machine_info"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2024"
 
 [dependencies]
+directories = "6.0.0"
 rusqlite = { version = "0.37.0", features = ["bundled"] }
-slint = "1.12.1"
+slint = "1.13.0"
 sysinfo = "0.37.0"
 
 [build-dependencies]
-slint-build = "1.12.1"
+slint-build = "1.13.0"
 
 [package.metadata.bundle]
 name = "Machine Info"
@@ -27,7 +28,7 @@ icon = [
     "ui/icons/MachineInfo512x512.png",
     "ui/icons/MachineInfo512x512@2x.png"
 ]
-version = "0.1.7"
+version = "0.1.8"
 resources = ["assets", "LICENSE"]
 copyright = "Copyright (c) Daniel Mattila 2025. All rights reserved."
 category = "Utility"

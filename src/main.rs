@@ -3,12 +3,12 @@
 use std::env;
 use std::error::Error;
 use std::sync::Arc;
-use machine_info::{Memory, Storage, Processor, database};
+use machine_info::{Memory, Storage, Processor, db};
 slint::include_modules!();
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Initialize the database connection and wrap it in Arc (allows multiple conn.executes)
-    let conn = Arc::new(database::init_db()?);
+    let conn = Arc::new(db::settings::init_db()?);
 
     // Get connection to disks
     let mut _storage_connection = Storage::get_storage_connection();
@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
 
     // Restore previous session state
-    if let Ok(saved_entry) = database::get_saved_entry(&conn) {
+    if let Ok(saved_entry) = db::settings::get_saved_entry(&conn) {
         ui.set_input_text(saved_entry.into());
     }
 
@@ -86,7 +86,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let input_text = ui.get_input_text().to_string();
             #[cfg(debug_assertions)]
             println!("Saving input: {}", input_text);
-            database::set_saved_entry(&conn, &input_text);
+            db::settings::set_saved_entry(&conn, &input_text);
         }
     });
 
@@ -108,7 +108,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         move || {
             #[cfg(debug_assertions)]
             println!("{:?}", ui_handle.unwrap().window().position());
-            database::set_window_position(
+            db::settings::set_window_position(
                 &conn,
                 ui_handle.unwrap().window().position().x,
                 ui_handle.unwrap().window().position().y,
@@ -119,7 +119,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Configure launching of application
     let weak_app = ui.as_weak();
-    let dimensions = database::get_window_position(&conn);
+    let dimensions = db::settings::get_window_position(&conn);
     slint::invoke_from_event_loop(move || {
         // Set the window position to specific x, y coordinates
         weak_app

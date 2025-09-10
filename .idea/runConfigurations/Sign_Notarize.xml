@@ -3,7 +3,7 @@
     <option name="SCRIPT_TEXT" value="" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="$PROJECT_DIR$/../../Scripts/ZipUp/ZipUp.sh" />
-    <option name="SCRIPT_OPTIONS" value="" />
+    <option name="SCRIPT_OPTIONS" value="&quot;Daniel Mattila&quot; &quot;Machine Info.App&quot; &quot;MachineInfo&quot; &quot;MachineInfoDistribution.zip&quot;" />
     <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
     <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/target/release/bundle/osx" />
     <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />

@@ -1,8 +1,18 @@
+#[derive(Debug, Default, Clone)]
+pub struct WindowInformation {
+    pub x: i32, // X Start Position
+    pub y: i32, // Y Start Position
+    pub width: u32, // Width of the window
+    pub height: u32, // Height of the window
+    pub maximized: bool, // Is the window maximized?
+    pub fullscreen: bool // Is the window fullscreen?
+}
+
 #[derive(Debug, Default)]
 pub struct Dimension {
     // String because app.db uses TEXT for the column type
-    pub x_position: Option<String>,
-    pub y_position: Option<String>,
+    pub x_position: Option<i32>,
+    pub y_position: Option<i32>,
 }
 
 #[derive(Debug, Default, Clone)]

@@ -2636,7 +2636,7 @@ dependencies = [
 
 [[package]]
 name = "machine_info"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "directories",
  "rusqlite",
